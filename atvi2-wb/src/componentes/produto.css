@@ -1,0 +1,7 @@
+
+#deleteTab .card, #updateTab .card {
+    padding: 0 !important;
+    margin: 2%;
+    width: 95%;
+    justify-content: center;
+}
