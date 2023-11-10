@@ -8,6 +8,7 @@ import Servicos from "./produtos_servicos/atualizarDeletarServico";
 import Compra from "./compra";
 import Home from "./home";
 import Clientes from "./clientes/clientes";
+import { Listagem } from "./listagem";
 
 export function AppRoutes() {
     return (
@@ -20,7 +21,8 @@ export function AppRoutes() {
                     { nome: 'Serviços', rota:'/servicos'},
                     { nome: 'Cadastro de Clientes', rota: "/cadastrocliente" },
                     { nome: 'Cadastro de Produtos & Serviços', rota: "/cadastroprodserv" },
-                    { nome: 'Compra cliente', rota:'/compraCliente'}
+                    { nome: 'Compra cliente', rota:'/compraCliente'},
+                    { nome: 'Listagem', rota:'/listagem'}
                 ]} seletorView={() => {}} />
                 <Routes>
                     <Route path="/" element={<Home tema="purple darken-2" />} />
@@ -30,6 +32,7 @@ export function AppRoutes() {
                     <Route path="/cadastroprodserv" element={<FormularioCadastroProduto tema="purple darken-2" />} />
                     <Route path="/cadastrocliente" element={<FormularioCadastroCliente tema="purple darken-2" />} />
                     <Route path="/compraCliente" element={<Compra id={""} cpf={""} tema={""} />}/>
+                    <Route path="/listagem" element={<Listagem id={""} tema={""} />}/>
                 </Routes>
             </div>
         </BrowserRouter>
