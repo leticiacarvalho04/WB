@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BarraNavegacao from "./barraNavegacao";
-import FormularioCadastroCliente from "./formularioCadastroCliente";
-import ListaCliente from "./listaCliente";
-import FormularioCadastroProduto from "./formCadastroProdutoServico";
-import ProdutoDetails from "./atualizarDeletarProduto";
-import Servicos from "./atualizarDeletarServico";
+import FormularioCadastroCliente from "./clientes/formularioCadastroCliente";
+import ListaCliente from "./home";
+import FormularioCadastroProduto from "./produtos_servicos/formCadastroProdutoServico";
+import ProdutoDetails from "./produtos_servicos/atualizarDeletarProduto";
+import Servicos from "./produtos_servicos/atualizarDeletarServico";
 import Compra from "./compra";
-import Home from "./listaCliente";
-import Clientes from "./clientes";
+import Home from "./home";
+import Clientes from "./clientes/clientes";
 
 export function AppRoutes() {
     return (

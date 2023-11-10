@@ -17,7 +17,7 @@ export default class Home extends Component<Props> {
             <>
             <div className="cards-container">
             <div className="row center-align">
-                <div className="">
+                <div className="um">
                     <div className="card medium">
                         <div className="card-content">
                             <span className="card-title">Clientes Mais Consumidores</span>
@@ -65,7 +65,6 @@ export default class Home extends Component<Props> {
                                             <li className="collection-item">Perfume Feminino: 2 unidades</li>
                                             <li className="collection-item">Batom Matte: 3 unidades</li>
                                             <li className="collection-item">Sombra em Pó: 3 unidades</li>
-                                            <li className="collection-item">Perfume Masculino: 3 unidades</li>
                                             <li className="collection-item">Esmalte Duradouro: 2 unidades</li>
                                         </ul>
                                         <p><a href="#">Visualizar a lista completa</a></p>

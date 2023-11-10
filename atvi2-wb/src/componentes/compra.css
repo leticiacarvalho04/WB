@@ -7,6 +7,9 @@
     margin-top: 3% !important;
     padding: 0 !important;
     width: 90% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #searchTab {
@@ -24,7 +27,15 @@
     flex-wrap: wrap;
     justify-content: space-evenly;
     align-items: center;
-    width: 98%;
+    width: 100%; /* Alterado para preencher todo o card */
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Alterado para preencher todo o card */
 }
 
 @media screen and (min-width: 600px) {

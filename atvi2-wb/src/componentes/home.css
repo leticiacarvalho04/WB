@@ -13,11 +13,23 @@
     margin-bottom: 2%;
 }
 
+.row{
+    margin: 0;
+    height: auto;
+}
+
 .card {
-    width: 35vw; /* Largura em relação à largura da tela */
+    width: 30vw; 
     flex: 1;
-    margin: 1%; /* Ajustei a margem */
     margin-bottom: 6%; /* Ajustei a margem */
+}
+
+.um{
+    width: 30vw;
+}
+
+.um ul{
+    width: 25vw;
 }
 
 @media screen and (min-width: 600px) {
