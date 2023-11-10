@@ -5,9 +5,19 @@ type Props = {
 };
 
 export default class FormularioCadastroCliente extends React.Component<Props> {
+
+      state = {
+        quantidadeRg: 0,
+    };
+
     componentDidMount() {
         M.AutoInit();
       }
+      
+    handleQuantidadeRgChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ quantidadeRg: parseInt(event.target.value, 10) });
+    };    
+
   render() {
     let estiloBotao = `btn waves-effect waves-light ${this.props.tema}`;
     return (
@@ -41,13 +51,15 @@ export default class FormularioCadastroCliente extends React.Component<Props> {
                 <label htmlFor="data_emissao_cpf">Data de emissão do CPF</label>
               </div>
               <div className="input-field col s12">
-                <input id="quantidade_rg" type="text" className="validate" />
+                <input id="quantidade_rg" type="text" className="validate" onChange={this.handleQuantidadeRgChange} />
                 <label htmlFor="quantidade_rg">Quantidade de RG</label>
               </div>
-              <div className="input-field col s12">
-                <input id="rg" type="text" className="validate" />
-                <label htmlFor="rg">N° de RG</label>
-              </div>
+              {!isNaN(this.state.quantidadeRg) && [...Array(this.state.quantidadeRg)].map((_, i) => (
+                  <div key={i} className="input-field col s12">
+                      <input id={`rg_${i}`} type="text" className="validate" />
+                      <label htmlFor={`rg_${i}`}>Digite o n° do RG {i + 1}</label>
+                  </div>
+              ))}
               <div className="input-field col s12">
                 <input id="data_emissao_rg" type="text" className="validate" />
                 <label htmlFor="data_emissao_rg">Data de emissão do RG</label>
