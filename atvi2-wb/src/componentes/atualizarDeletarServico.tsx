@@ -190,14 +190,14 @@ export default class Servicos extends Component<Props, State> {
                                 <input id="preco" type="text" className="validate" />
                                 <label htmlFor="preco">Preço</label>
                             </div>
-                        </div>
-                        <div className="row" >
+                            <div className="row" >
                             <div className="col s12">
                                 <button className={estiloBotao} type="submit" name="action">
                                 Submit
                                 <i className="material-icons right">send</i>
                                 </button>
                             </div>
+                        </div>
                         </div>
                         <div className="row" style={{ marginBottom: '20px' }}></div>
                     </div>

@@ -157,7 +157,7 @@ export default class Compra extends Component<Props, State> {
         
         return (
             <div className="row center-align">
-                <div id="searchTab" className={`searchTab`}>
+                <div className="searchTab">
                     <div className="card">
                         <div className="card-content">
                             <span className="card-title">Comprar Produto ou Serviço</span>
@@ -185,7 +185,7 @@ export default class Compra extends Component<Props, State> {
                             </div>
                             {((this.state.nome || this.state.id || this.state.cpf) && this.state.buscou) && (
                             <div className="row">
-                                <div className="col s6 offset-s3">
+                                <div className="col s6 offset-s3 m1">
                                     <form className="col s12">
                                         <div className="row">
                                             <label htmlFor="compra">Escolha o que foi consumido</label>

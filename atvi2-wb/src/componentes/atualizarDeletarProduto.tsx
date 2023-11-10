@@ -34,7 +34,7 @@ function buscarProduto(query: string) {
 }
 
 
-export default class ClienteDetails extends Component<Props, State> {
+export default class ProdutoDetails extends Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -194,14 +194,14 @@ export default class ClienteDetails extends Component<Props, State> {
                                 <input id="estoque" type="text" className="validate" />
                                 <label htmlFor="estoque">N° de produtos no estoque</label>
                             </div>
-                        </div>
-                        <div className="row" >
+                            <div className="row" >
                             <div className="col s12">
                                 <button className={estiloBotao} type="submit" name="action">
                                 Submit
                                 <i className="material-icons right">send</i>
                                 </button>
                             </div>
+                        </div>
                         </div>
                         <div className="row" style={{ marginBottom: '20px' }}></div>
                     </div>

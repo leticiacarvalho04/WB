@@ -1,0 +1,21 @@
+  .container {
+    width: 80%;
+  }
+  
+  .card {
+    width: 80%;
+    max-width: 600px; /* Ajuste conforme necessário */
+    margin: 0 auto;
+
+  }
+  
+  .tabs a {
+    width: 80%;
+    color: #fff; /* Cor do texto das tabs, ajuste conforme necessário */
+    margin-bottom: 1%;
+  }
+
+  .card-content {
+    padding: 20px;
+  }
+  

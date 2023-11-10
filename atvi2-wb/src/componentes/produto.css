@@ -1,7 +1,8 @@
-
+.card{
+    display: flex;
+}
 #deleteTab .card, #updateTab .card {
+    width: 100vw;
     padding: 0 !important;
-    margin: 2%;
-    width: 95%;
     justify-content: center;
 }

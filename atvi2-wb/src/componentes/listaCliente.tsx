@@ -1,12 +1,12 @@
 import { Component } from "react";
 import 'materialize-css/dist/css/materialize.min.css';
-import './cliente.css'
+import './home.css'
 
 type Props = {
     tema: string;
 };
 
-export default class ListaCliente extends Component<Props> {
+export default class Home extends Component<Props> {
     componentDidMount() {
         const tabs = document.querySelectorAll('.tabs');
         M.Tabs.init(tabs);
