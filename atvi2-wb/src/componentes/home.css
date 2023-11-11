@@ -32,8 +32,26 @@
     width: 25vw;
 }
 
+.dois{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    width: 98vw;
+    justify-content: center;
+}
+
+.dois .card{
+    margin: 0;
+    justify-content: center;
+    flex-wrap: 45%;
+}
+
 @media screen and (min-width: 600px) {
     .card {
+        flex-basis: 48%;
+    }
+    .dois .card{
         flex-basis: 48%;
     }
 }
@@ -42,10 +60,16 @@
     .card {
         flex-basis: 100%;
     }
+    .dois .card{
+        flex-basis: 100%;
+    }
 }
 
 @media screen and (max-width: 600px) {
     .card {
+        width: 90vw; /* Redefinindo a largura em relação à largura da tela para empilhar */
+    }
+    .dois .card{
         width: 90vw; /* Redefinindo a largura em relação à largura da tela para empilhar */
     }
 }

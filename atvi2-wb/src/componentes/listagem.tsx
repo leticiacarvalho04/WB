@@ -1,7 +1,7 @@
-import { Component } from "react";
+import React, { Component } from "react";
 
 type Props = {
-    id: string,
+    id: string;
     tema: string;
 };
 
@@ -17,9 +17,15 @@ interface Servico {
     preco: number;
 }
 
+interface Cliente {
+    id: string;
+    nome: string;
+    quantidadeConsumida: number;
+}
+
 interface State {
     activeTab: string;
-    id: string,
+    id: string;
     nome: string;
     tema: string;
 }
@@ -38,7 +44,14 @@ const produtos: Produto[] = [
     // adicione mais produtos conforme necessário
 ];
 
-export class Listagem extends Component<Props, State>{
+const clientes: Cliente[] = [
+    { id: '1', nome: 'Maria Oliveira', quantidadeConsumida: 25 },
+    { id: '2', nome: 'Mariana Santos', quantidadeConsumida: 20 },
+    { id: '3', nome: 'Audrey Duarte', quantidadeConsumida: 18 },
+    // adicione mais clientes conforme necessário
+];
+
+export class Listagem extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -53,18 +66,18 @@ export class Listagem extends Component<Props, State>{
         this.setState({
             activeTab: tabName
         });
-    }
+    };
 
     componentDidMount() {
         const tabs = document.querySelectorAll('.tabs');
         M.Tabs.init(tabs);
     }
 
-    renderLista = (itens: { id: string, nome: string, preco: number }[]) => (
+    renderLista = (itens: { id: string, nome: string, preco?: number, quantidadeConsumida?: number }[]) => (
         <ul>
             {itens.map(item => (
                 <li key={item.id}>
-                    {`${item.id} - ${item.nome} - ${item.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`}
+                    {`${item.id} - ${item.nome} - ${item.preco ? item.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : item.quantidadeConsumida + ' unidades'}`}
                 </li>
             ))}
         </ul>
@@ -75,11 +88,14 @@ export class Listagem extends Component<Props, State>{
             <div className="row center-align">
                 <div className="col s12">
                     <ul className="tabs">
-                        <li className="tab col s6" onClick={() => this.handleTabClick('produto')}>
+                        <li className="tab col s4" onClick={() => this.handleTabClick('produto')}>
                             <a className={this.state.activeTab === 'produto' ? 'active' : ''} href="#produtoTab">Listagem Produto</a>
                         </li>
-                        <li className="tab col s6" onClick={() => this.handleTabClick('servico')}>
+                        <li className="tab col s4" onClick={() => this.handleTabClick('servico')}>
                             <a className={this.state.activeTab === 'servico' ? 'active' : ''} href="#servicoTab">Listagem Serviço</a>
+                        </li>
+                        <li className="tab col s4" onClick={() => this.handleTabClick('cliente')}>
+                            <a className={this.state.activeTab === 'cliente' ? 'active' : ''} href="#clienteTab">Listagem Clientes Que Mais Consumiram</a>
                         </li>
                     </ul>
                 </div>
@@ -98,6 +114,14 @@ export class Listagem extends Component<Props, State>{
                             {this.renderLista(servicos)}
                         </div>
                         <div className="row" style={{ marginBottom: '20px' }}></div>
+                    </div>
+                </div>
+                <div id="clienteTab" className={`col s12 ${this.state.activeTab === 'cliente' ? 'active' : ''}`}>
+                    <div className="card">
+                        <div className="card-content">
+                            <span className="card-title">Top 10 clientes que mais consumiram</span>
+                            {this.renderLista(clientes)}
+                        </div>
                     </div>
                 </div>
             </div>

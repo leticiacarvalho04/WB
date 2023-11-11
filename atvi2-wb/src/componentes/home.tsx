@@ -6,13 +6,31 @@ type Props = {
     tema: string;
 };
 
+interface ClienteMaisConsumidor {
+    nome: string;
+    quantidade: number;
+}
+
 export default class Home extends Component<Props> {
     componentDidMount() {
         const tabs = document.querySelectorAll('.tabs');
         M.Tabs.init(tabs);
     }
     render() {
-        let estilo = `collection-item active ${this.props.tema}`;
+        const clientesMaisConsumidores: ClienteMaisConsumidor[] = [
+            { nome: 'Maria Oliveira', quantidade: 25 },
+            { nome: 'Mariana Santos', quantidade: 20 },
+            { nome: 'Audrey Duarte', quantidade: 18 },
+            { nome: 'Juliana Oliveira', quantidade: 15 },
+            { nome: 'Ana Clara', quantidade: 12 },
+            // Adicione mais clientes conforme necessário
+        ];
+
+        const clientesOrdenados = clientesMaisConsumidores.sort((a, b) => b.quantidade - a.quantidade);
+
+        // Seleciona os top 10 clientes
+        const top10Clientes = clientesOrdenados.slice(0, 10);
+
         return (
             <>
             <div className="cards-container">
@@ -122,6 +140,24 @@ export default class Home extends Component<Props> {
                     </div>
                 </div>
             </div>
+            <div className="cards-container">
+                    <div className="row center-align">
+                        <div className="dois">
+                            <div className="card">
+                                <div className="card-content">
+                                    <span className="card-title">Clientes Mais Consumidores</span>
+                                    <ul className="collection">
+                                        {top10Clientes.map((cliente, index) => (
+                                            <li key={index} className="collection-item">{cliente.nome}: {cliente.quantidade} unidades</li>
+                                        ))}
+                                    </ul>
+                                    <p><a href="#">Visualizar a lista completa</a></p>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Restante do código... */}
+                    </div>
+                </div>
             </>
         );
     }
