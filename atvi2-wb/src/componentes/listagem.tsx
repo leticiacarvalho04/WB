@@ -1,55 +1,59 @@
 import React, { Component } from "react";
+import './listagem.css'
 
 type Props = {
     id: string;
     tema: string;
-};
-
-interface Produto {
+  };
+  
+  interface Produto {
     id: string;
     nome: string;
     preco: number;
-}
-
-interface Servico {
+    genero: string; // Adicionado campo de gênero
+  }
+  
+  interface Servico {
     id: string;
     nome: string;
     preco: number;
-}
-
-interface Cliente {
+    genero: string; // Adicionado campo de gênero
+  }
+  
+  interface Cliente {
     id: string;
     nome: string;
     quantidadeConsumida: number;
-}
-
-interface State {
+    genero: string; // Adicionado campo de gênero
+  }
+  
+  interface State {
     activeTab: string;
     id: string;
     nome: string;
     tema: string;
-}
-
-const servicos: Servico[] = [
-    { id: '1', nome: 'Corte de cabelo', preco: 50.0 },
-    { id: '2', nome: 'Manicure', preco: 20.0 },
-    { id: '3', nome: 'Pedicure', preco: 25.0 },
+  }
+  
+  const servicos: Servico[] = [
+    { id: '1', nome: 'Corte de cabelo', preco: 50.0, genero: 'unissex' },
+    { id: '2', nome: 'Manicure', preco: 20.0, genero: 'feminino' },
+    { id: '3', nome: 'Pedicure', preco: 25.0, genero: 'feminino' },
     // adicione mais serviços conforme necessário
-];
-
-const produtos: Produto[] = [
-    { id: '1', nome: 'Perfume feminino', preco: 100.0 },
-    { id: '2', nome: 'Batom matte', preco: 15.0 },
-    { id: '3', nome: 'Perfume masculino', preco: 120.0 },
+  ];
+  
+  const produtos: Produto[] = [
+    { id: '1', nome: 'Perfume feminino', preco: 100.0, genero: 'feminino' },
+    { id: '2', nome: 'Batom matte', preco: 15.0, genero: 'feminino' },
+    { id: '3', nome: 'Perfume masculino', preco: 120.0, genero: 'masculino' },
     // adicione mais produtos conforme necessário
-];
-
-const clientes: Cliente[] = [
-    { id: '1', nome: 'Maria Oliveira', quantidadeConsumida: 25 },
-    { id: '2', nome: 'Mariana Santos', quantidadeConsumida: 20 },
-    { id: '3', nome: 'Audrey Duarte', quantidadeConsumida: 18 },
+  ];
+  
+  const clientes: Cliente[] = [
+    { id: '1', nome: 'Maria Oliveira', quantidadeConsumida: 25, genero: 'feminino' },
+    { id: '2', nome: 'Mariana Santos', quantidadeConsumida: 20, genero: 'feminino' },
+    { id: '3', nome: 'Audrey Duarte', quantidadeConsumida: 18, genero: 'feminino' },
     // adicione mais clientes conforme necessário
-];
+  ];
 
 export class Listagem extends Component<Props, State> {
     constructor(props: Props) {
@@ -61,6 +65,42 @@ export class Listagem extends Component<Props, State> {
             tema: props.tema,
         };
     }
+
+    calcularMaisConsumidosPorGenero = (itens: { genero: string }[]) => {
+        const contagemPorGenero: { [key: string]: number } = {};
+    
+        itens.forEach(item => {
+          contagemPorGenero[item.genero] = (contagemPorGenero[item.genero] || 0) + 1;
+        });
+    
+        return contagemPorGenero;
+      };
+    
+      // Função para obter os itens mais consumidos por gênero
+      obterMaisConsumidosPorGenero = (itens: { id: string, nome: string, preco?: number, quantidadeConsumida?: number, genero: string }[]) => {
+        const contagemPorGenero = this.calcularMaisConsumidosPorGenero(itens);
+    
+        // Filtra os itens para cada gênero
+        const itensPorGenero: { [key: string]: { id: string, nome: string, preco?: number, quantidadeConsumida?: number }[] } = {};
+        itens.forEach(item => {
+          if (!itensPorGenero[item.genero]) {
+            itensPorGenero[item.genero] = [];
+          }
+          itensPorGenero[item.genero].push(item);
+        });
+    
+        return itensPorGenero;
+      };
+
+      obterClientesMenosConsumidores = (clientes: Cliente[]) => {
+        // Ordena os clientes pelo total de consumo em ordem crescente
+        const clientesOrdenados = clientes.sort((a, b) => a.quantidadeConsumida - b.quantidadeConsumida);
+    
+        // Inverte a ordem para obter do menor para o maior consumo
+        const clientesMenosConsumidores = clientesOrdenados.slice(0, 10).reverse();
+    
+        return clientesMenosConsumidores;
+      };
 
     handleTabClick = (tabName: string) => {
         this.setState({
@@ -83,8 +123,29 @@ export class Listagem extends Component<Props, State> {
         </ul>
     );
 
+    obterClientesMaisConsumidores = (clientes: Cliente[]) => {
+        // Ordena os clientes pelo total de consumo em ordem decrescente
+        const clientesOrdenados = clientes.sort((a, b) => b.quantidadeConsumida - a.quantidadeConsumida);
+    
+        // Seleciona os primeiros 10 clientes (os que mais consumiram)
+        const clientesMaisConsumidores = clientesOrdenados.slice(0, 10);
+    
+        return clientesMaisConsumidores;
+      };
+
     render() {
+        const itensMaisConsumidosPorGenero = this.obterMaisConsumidosPorGenero(
+            this.state.activeTab === 'produto' ? produtos :
+              this.state.activeTab === 'servico' ? servicos :
+                clientes
+          );
+
+          const clientesMenosConsumidores = this.obterClientesMenosConsumidores(clientes);
+
+          const clientesMaisConsumidores = this.obterClientesMaisConsumidores(clientes);
+
         return (
+            <>
             <div className="row center-align">
                 <div className="col s12">
                     <ul className="tabs">
@@ -95,7 +156,7 @@ export class Listagem extends Component<Props, State> {
                             <a className={this.state.activeTab === 'servico' ? 'active' : ''} href="#servicoTab">Listagem Serviço</a>
                         </li>
                         <li className="tab col s4" onClick={() => this.handleTabClick('cliente')}>
-                            <a className={this.state.activeTab === 'cliente' ? 'active' : ''} href="#clienteTab">Listagem Clientes Que Mais Consumiram</a>
+                            <a className={this.state.activeTab === 'cliente' ? 'active' : ''} href="#clienteTab">Listagens Relacionadas aos Clientes</a>
                         </li>
                     </ul>
                 </div>
@@ -104,6 +165,17 @@ export class Listagem extends Component<Props, State> {
                         <div className="card-content">
                             <span className="card-title">Listar Produto</span>
                             {this.renderLista(produtos)}
+                        </div>
+                    </div>
+                    <div className="card">
+                        <div className="card-content">
+                        <span className="card-title">Produtos mais consumidos por gênero</span>
+                        {Object.keys(itensMaisConsumidosPorGenero).map((genero, index) => (
+                            <div key={index}>
+                            <h5>{genero}</h5>
+                            {this.renderLista(itensMaisConsumidosPorGenero[genero])}
+                            </div>
+                        ))}
                         </div>
                     </div>
                 </div>
@@ -115,16 +187,34 @@ export class Listagem extends Component<Props, State> {
                         </div>
                         <div className="row" style={{ marginBottom: '20px' }}></div>
                     </div>
+                    <div className="card">
+                        <div className="card-content">
+                        <span className="card-title">Serviços mais consumidos por gênero</span>
+                        {Object.keys(itensMaisConsumidosPorGenero).map((genero, index) => (
+                            <div key={index}>
+                            <h5>{genero}</h5>
+                            {this.renderLista(itensMaisConsumidosPorGenero[genero])}
+                            </div>
+                        ))}
+                        </div>
+                    </div>
+                </div>
                 </div>
                 <div id="clienteTab" className={`col s12 ${this.state.activeTab === 'cliente' ? 'active' : ''}`}>
                     <div className="card">
                         <div className="card-content">
                             <span className="card-title">Top 10 clientes que mais consumiram</span>
-                            {this.renderLista(clientes)}
+                            {this.renderLista(clientesMaisConsumidores)}
+                        </div>
+                    </div>
+                    <div className="card">
+                        <div className="card-content">
+                            <span className="card-title">Top 10 clientes que menos consumiram</span>
+                            {this.renderLista(clientesMenosConsumidores)}
                         </div>
                     </div>
                 </div>
-            </div>
+                </>
         );
     }
 }

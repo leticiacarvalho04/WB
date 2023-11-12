@@ -34,22 +34,20 @@ export default class Home extends Component<Props> {
         return (
             <>
             <div className="cards-container">
-            <div className="row center-align">
-                <div className="um">
-                    <div className="card medium">
-                        <div className="card-content">
-                            <span className="card-title">Clientes Mais Consumidores</span>
-                            <ul className="collection">
-                                <li className="collection-item">Maria Oliveira</li>
-                                <li className="collection-item">Mariana Santos</li>
-                                <li className="collection-item">Audrey Duarte</li>
-                                <li className="collection-item">Juliana Oliveira</li>
-                                <li className="collection-item">Ana Clara</li>
-                            </ul>
-                            <p><a href="#">Visualizar a lista completa</a></p>
+                <div className="row center-align">
+                    <div className="dois">
+                        <div className="card">
+                            <div className="card-content">
+                                <span className="card-title">Clientes Mais Consumidores</span>
+                                <ul className="collection">
+                                    {top10Clientes.map((cliente, index) => (
+                                        <li key={index} className="collection-item">{cliente.nome}: {cliente.quantidade} unidades</li>
+                                    ))}
+                                </ul>
+                                <p><a href="/listagem#clienteTab">Visualizar a lista completa</a></p>
+                            </div>
                         </div>
                     </div>
-                </div>
                 <div className="">
                     <div className="card">
                         <div className="card-content">
@@ -85,7 +83,7 @@ export default class Home extends Component<Props> {
                                             <li className="collection-item">Sombra em Pó: 3 unidades</li>
                                             <li className="collection-item">Esmalte Duradouro: 2 unidades</li>
                                         </ul>
-                                        <p><a href="#">Visualizar a lista completa</a></p>
+                                        <p><a href="/listagem#produtoTab">Visualizar a lista completa</a></p>
                                     </div>
                                     <div id="servicos">
                                         <ul className="collection">
@@ -94,7 +92,7 @@ export default class Home extends Component<Props> {
                                             <li className="collection-item">Pedicure: R$ 90,00</li>
                                             <li className="collection-item">Limpeza de Pele: R$ 120,00</li>
                                         </ul>
-                                        <p><a href="#">Visualizar a lista completa</a></p>
+                                        <p><a href="/listagem#servicoTab">Visualizar a lista completa</a></p>
                                     </div>
                                 </div>
                             </div>
@@ -122,7 +120,7 @@ export default class Home extends Component<Props> {
                                                 <li className="collection-item">Esmalte Duradouro: 1 unidade</li>
                                                 
                                             </ul>
-                                            <p><a href="#">Visualizar a lista completa</a></p>
+                                            <p><a href="/listagem#produtoTab">Visualizar a lista completa</a></p>
                                         </div>
                                         {/* Tab Masculino */}
                                         <div id="masculino">
@@ -132,7 +130,7 @@ export default class Home extends Component<Props> {
                                                 <li className="collection-item">Esmalte Duradouro: 1 unidade</li>
                                                 <li className="collection-item">Perfume Unissex: 1 unidade</li>
                                             </ul>
-                                            <p><a href="#">Visualizar a lista completa</a></p>
+                                            <p><a href="/listagem#produtoTab">Visualizar a lista completa</a></p>
                                         </div>
                                     </div>
                             </div>
@@ -140,24 +138,6 @@ export default class Home extends Component<Props> {
                     </div>
                 </div>
             </div>
-            <div className="cards-container">
-                    <div className="row center-align">
-                        <div className="dois">
-                            <div className="card">
-                                <div className="card-content">
-                                    <span className="card-title">Clientes Mais Consumidores</span>
-                                    <ul className="collection">
-                                        {top10Clientes.map((cliente, index) => (
-                                            <li key={index} className="collection-item">{cliente.nome}: {cliente.quantidade} unidades</li>
-                                        ))}
-                                    </ul>
-                                    <p><a href="#">Visualizar a lista completa</a></p>
-                                </div>
-                            </div>
-                        </div>
-                        {/* Restante do código... */}
-                    </div>
-                </div>
             </>
         );
     }

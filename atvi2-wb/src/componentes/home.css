@@ -8,7 +8,7 @@
     flex-wrap: wrap;
     width: 100%;
     justify-content: center;
-    gap: 1%; /* Reduzi a folga entre os cards */
+    gap: 1%; 
     margin: 2% 0;
     margin-bottom: 2%;
 }
@@ -21,18 +21,10 @@
 .card {
     width: 30vw; 
     flex: 1;
-    margin-bottom: 6%; /* Ajustei a margem */
+    margin-bottom: 6%;
 }
 
 .um{
-    width: 30vw;
-}
-
-.um ul{
-    width: 25vw;
-}
-
-.dois{
     display: flex;
     flex-wrap: wrap;
     margin: 0;
@@ -41,7 +33,7 @@
     justify-content: center;
 }
 
-.dois .card{
+.um .card{
     margin: 0;
     justify-content: center;
     flex-wrap: 45%;
@@ -51,8 +43,8 @@
     .card {
         flex-basis: 48%;
     }
-    .dois .card{
-        flex-basis: 48%;
+    .um .card{
+        flex-basis: 45%;
     }
 }
 
@@ -60,16 +52,16 @@
     .card {
         flex-basis: 100%;
     }
-    .dois .card{
-        flex-basis: 100%;
+    .um .card{
+        flex-basis: 90%;
     }
 }
 
 @media screen and (max-width: 600px) {
     .card {
-        width: 90vw; /* Redefinindo a largura em relação à largura da tela para empilhar */
+        width: 90vw; 
     }
-    .dois .card{
-        width: 90vw; /* Redefinindo a largura em relação à largura da tela para empilhar */
+    .um .card{
+        width: 80vw;
     }
 }

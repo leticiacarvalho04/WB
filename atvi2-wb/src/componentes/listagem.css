@@ -1,0 +1,60 @@
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .tabs {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+#produtoTab, #servicoTab, #clienteTab{
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .tab {
+    margin: 0;
+    padding: 0;
+    flex: 1 0 100%;
+    text-align: center;
+    margin-bottom: 15px;
+    justify-content: center;
+  }
+  
+  .card {
+    width: 100%;
+    max-width: 600px;
+    margin: 15px;
+  }
+  
+  @media screen and (min-width: 600px) {
+    .tab {
+      flex: 1 0 auto;
+    }
+  }
+  
+  /* Adicionando estilo para centralizar os cards na tela */
+  .container {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ajuste conforme necessário */
+  }
+  
+  .card-content {
+    padding: 20px;
+    text-align: center;
+  }
+  
