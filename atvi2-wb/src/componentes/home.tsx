@@ -67,32 +67,31 @@ export default class Home extends Component<Props> {
                     <div className="">
                         <div className="card medium">
                             <div className="card-content">
-                                <div className="row">
-                                    <span className="card-title">Produtos e serviços Mais Consumidos</span>
-                                    <div className="card-tabs">
-                                        <ul className="tabs tabs-fixed-width">
-                                            <li className="tab"><a href="#produtos">Produtos</a></li>
-                                            <li className="tab"><a href="#servicos">Serviços</a></li>
-                                        </ul>
-                                    </div>
-                                
-                                    <div id="produtos">
-                                        <ul className="collection">
-                                            <li className="collection-item">Perfume Feminino: 2 unidades</li>
-                                            <li className="collection-item">Batom Matte: 3 unidades</li>
-                                            <li className="collection-item">Sombra em Pó: 3 unidades</li>
-                                            <li className="collection-item">Esmalte Duradouro: 2 unidades</li>
-                                        </ul>
-                                        <p><a href="/listagem#produtoTab">Visualizar a lista completa</a></p>
-                                    </div>
-                                    <div id="servicos">
-                                        <ul className="collection">
-                                            <li className="collection-item">Corte de Cabelo: R$ 40,00</li>
-                                            <li className="collection-item">Manicure: R$ 70,00</li>
-                                            <li className="collection-item">Pedicure: R$ 90,00</li>
-                                            <li className="collection-item">Limpeza de Pele: R$ 120,00</li>
-                                        </ul>
-                                        <p><a href="/listagem#servicoTab">Visualizar a lista completa</a></p>
+                                <span className="card-title">Produtos e Serviços Mais Consumidos</span>
+                                <div className="card-tabs">
+                                    <ul className="tabs tabs-fixed-width">
+                                        <li className="tab"><a href="#produtos">Produtos</a></li>
+                                        <li className="tab"><a href="#servicos">Serviços</a></li>
+                                    </ul>
+                                    <div className="row">
+                                        <div id="produtos" className="col s12">
+                                            <ul className="collection">
+                                                <li className="collection-item">Perfume Feminino: 2 unidades</li>
+                                                <li className="collection-item">Batom Matte: 3 unidades</li>
+                                                <li className="collection-item">Sombra em Pó: 3 unidades</li>
+                                                <li className="collection-item">Esmalte Duradouro: 2 unidades</li>
+                                            </ul>
+                                            <p><a href="/listagem#produtoTab">Visualizar a lista completa</a></p>
+                                        </div>
+                                        <div id="servicos" className="col s12">
+                                            <ul className="collection">
+                                                <li className="collection-item">Corte de Cabelo: R$ 40,00</li>
+                                                <li className="collection-item">Manicure: R$ 70,00</li>
+                                                <li className="collection-item">Pedicure: R$ 90,00</li>
+                                                <li className="collection-item">Limpeza de Pele: R$ 120,00</li>
+                                            </ul>
+                                            <p><a href="/listagem#servicoTab">Visualizar a lista completa</a></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -6,25 +6,24 @@
 .cards-container {
     display: flex;
     flex-wrap: wrap;
-    width: 100%;
     justify-content: center;
-    gap: 1%; 
+    gap: 1%;
     margin: 2% 0;
     margin-bottom: 2%;
 }
 
-.row{
-    margin: 0;
-    height: auto;
-}
-
 .card {
-    width: 30vw; 
+    width: 30vw;
     flex: 1;
     margin-bottom: 6%;
 }
 
-.um{
+.card-tabs {
+    width: 100%;
+    margin-bottom: 15px; /* Adiciona espaço entre as tabs e o conteúdo */
+}
+
+.um {
     display: flex;
     flex-wrap: wrap;
     margin: 0;
@@ -33,18 +32,25 @@
     justify-content: center;
 }
 
-.um .card{
+.um .card {
     margin: 0;
     justify-content: center;
-    flex-wrap: 45%;
+    flex-basis: 45%;
 }
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 400px) {
     .card {
         flex-basis: 48%;
     }
-    .um .card{
+    .um .card {
         flex-basis: 45%;
+    }
+    .tabs .row{
+        font-size: 1rem;
+        width: 10%;
+    }
+    .tabs li{
+        width: 50%;
     }
 }
 
@@ -52,16 +58,16 @@
     .card {
         flex-basis: 100%;
     }
-    .um .card{
+    .um .card {
         flex-basis: 90%;
     }
 }
 
 @media screen and (max-width: 600px) {
     .card {
-        width: 90vw; 
+        width: 90vw;
     }
-    .um .card{
+    .um .card {
         width: 80vw;
     }
 }
