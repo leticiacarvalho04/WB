@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Route, BrowserRouter, Routes as Switch } from "react-router-dom";
 import BarraNavegacao from './barraNavegacao';
-import { Home } from './home';
+import Home from './home';
 import Clientes from './clientes/clientes';
-import { ProdutoDetails } from './produtos_servicos/atualizarDeletarProduto';
-import { Servicos } from './produtos_servicos/atualizarDeletarServico';
-import { FormularioCadastroCliente } from './clientes/formularioCadastroCli';
-import { FormularioCadastroProduto } from './produtos_servicos/formCadastroProdServ';
+import ProdutoDetails from './produtos_servicos/atualizarDeletarProduto';
+import Servicos from './produtos_servicos/atualizarDeletarServico';
+import FormularioCadastroCliente from './clientes/formularioCadastroCli';
+import FormularioCadastroProduto from './produtos_servicos/formCadastroProdServ';
 import Compra from './compra';
 import Listagem from './listagem';
 
@@ -29,14 +29,14 @@ function AppRoutes() {
         />
         <BrowserRouter>
           <Switch>
-            <Route exact path="/" component={() => <Home tema="purple darken-2" />} />
-            <Route path="/clientes" component={Clientes} />
-            <Route path="/produtos" component={() => <ProdutoDetails tema="purple darken-2" id={''} />} />
-            <Route path="/servicos" component={() => <Servicos id={''} tema={''} />} />
-            <Route path="/cadastroprodserv" component={() => <FormularioCadastroProduto tema="purple darken-2" />} />
-            <Route path="/cadastrocliente" component={() => <FormularioCadastroCliente tema="purple darken-2" />} />
-            <Route path="/compraCliente" component={() => <Compra id={''} cpf={''} tema={''} />} />
-            <Route path="/listagem" component={() => <Listagem id={''} tema={''} />} />
+            <Route path="/" element={<Home tema="purple darken-2" />} />
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/produtos" element={<ProdutoDetails tema="purple darken-2" id={""} />} />
+            <Route path="/servicos" element={<Servicos id={""} tema={""} />} />
+            <Route path="/cadastroprodserv" element={<FormularioCadastroProduto tema="purple darken-2" />} />
+            <Route path="/cadastrocliente" element={<FormularioCadastroCliente tema="purple darken-2" />} />
+            <Route path="/compraCliente" element={<Compra id={""} cpf={""} tema={""} />}/>
+            <Route path="/listagem" element={<Listagem id={""} tema={""} />}/>
           </Switch>
       </BrowserRouter>
     </>

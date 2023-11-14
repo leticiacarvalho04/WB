@@ -8,7 +8,7 @@ export default function BarraNavegacao(props) {
             return <></>
         } else {
             let lista = props.botoes.map(valor =>
-                <li key={valor}><a onClick={(e) => props.seletorView(valor, e)}>{valor}</a></li>
+                <li key={valor.none}><a href={valor.rota} >{valor.nome}</a></li>
             )
             return lista
         }
@@ -16,7 +16,7 @@ export default function BarraNavegacao(props) {
 
     return (
         <>
-            <nav className={props.tema}>
+            <nav className="purple darken-2">
                 <div className="nav-wrapper">
                     <a className="brand-logo">WB</a>
                     <a data-target="mobile-menu" className="sidenav-trigger"><i className="material-icons">menu</i></a>
