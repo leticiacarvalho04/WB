@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
     "target": "es2016",                                  
-    "module": "commonjs",                                
-    "esModuleInterop": true,                                                    
+    "module": "commonjs",  
+    "rootDir": "./src",    
+    "outDir": "./dist",                         
+    "esModuleInterop": true,   
+    "moduleResolution": "node",              
     "forceConsistentCasingInFileNames": true,            
-    "strict": false,                                      
-    "outDir": "out/",
-    "moduleResolution": "node",
-    "noImplicitAny": false                                
+    "strict": true,                                      
+    "skipLibCheck": true                                 
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["./src"]
 }
