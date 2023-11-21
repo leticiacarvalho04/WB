@@ -58,6 +58,9 @@ router.post('/cadastro', async (req: Request, res: Response) => {
   }
 });
 
+                                              // LISTAGENS //
+
+// listar TODOS os clientes
 router.get('/clientes', async (req: Request, res: Response) => {
   try {
     const clientes = await prisma.cliente.findMany();
@@ -67,6 +70,183 @@ router.get('/clientes', async (req: Request, res: Response) => {
   }
 });
 
+// listar os clientes por GÊNERO
+router.get('/clientes/genero/:genero', async (req: Request,res: Response) => {
+    try {
+      const clientes = await prisma.cliente.findMany({
+        where: {
+          genero: req.params.genero
+        }
+      });
+      console.log(clientes);
+      res.json(clientes);
+      } catch (error) {
+        res.status(500).json(error);
+    }
+  });
+
+  // Listagem dos 10 clientes que mais consumiram produtos ou serviços
+  router.get('/clientes/maisConsumidores', async (req: Request, res: Response) => {
+      try {
+        // Primeiro, obtenha a contagem de produtos consumidos por cada cliente
+        const produtosConsumidosPorCliente = await prisma.produtosConsumidos.groupBy({
+          by: ['clienteId'],
+          _count: true
+        });
+
+        // Em seguida, obtenha a contagem de serviços consumidos por cada cliente
+        const servicosConsumidosPorCliente = await prisma.servicosConsumidos.groupBy({
+          by: ['clienteId'],
+          _count: true
+        });
+
+        // Agora, combine os resultados
+        const totalConsumidoPorCliente = produtosConsumidosPorCliente.map((cliente: { clienteId: number, _count: number }) => {
+          const servicosConsumidos = servicosConsumidosPorCliente.find((c: { clienteId: number, _count: number }) => c.clienteId === cliente.clienteId);
+          return {
+            clienteId: cliente.clienteId,
+            totalConsumido: cliente._count + (servicosConsumidos ? servicosConsumidos._count : 0)
+          };
+        });
+
+        // Ordene os resultados pelo total consumido
+        totalConsumidoPorCliente.sort((a: { totalConsumido: number }, b: { totalConsumido: number }) => b.totalConsumido - a.totalConsumido);
+
+        // Pegue os 10 primeiros resultados
+        const top10Clientes = totalConsumidoPorCliente.slice(0, 10);
+
+        // Finalmente, obtenha os detalhes completos dos clientes
+        const detalhesClientes = await Promise.all(top10Clientes.map(async (cliente: { clienteId: number }) => {
+          const clienteDetalhes = await prisma.cliente.findUnique({
+            where: {
+              id: cliente.clienteId
+            },
+            select: {
+              nome: true
+            }
+          });
+
+          const produtosConsumidosCount = await prisma.produtosConsumidos.count({
+            where: {
+              clienteId: cliente.clienteId
+            }
+          });
+
+          const servicosConsumidosCount = await prisma.servicosConsumidos.count({
+            where: {
+              clienteId: cliente.clienteId
+            }
+          });
+
+          return {
+            ...clienteDetalhes,
+            produtosConsumidos: produtosConsumidosCount,
+            servicosConsumidos: servicosConsumidosCount
+          };
+        }));
+
+        console.log(detalhesClientes);
+        res.json(detalhesClientes);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    });
+
+    // Rota para listar os produtos mais consumidos
+    router.get('/produtos/maisConsumidos', async (req: Request, res: Response) => {
+      try {
+        const produtos = await prisma.produto.findMany();
+        const produtosMaisConsumidos = await Promise.all(produtos.map(async (produto: { id: number, nome: string }) => {
+          const count = await prisma.produtosConsumidos.count({
+            where: {
+              produtoId: produto.id
+            }
+          });
+          return {
+            nomeProduto: produto.nome,
+            count
+          };
+        }));
+        produtosMaisConsumidos.sort((a: { count: number }, b: { count: number }) => b.count - a.count);
+        res.json(produtosMaisConsumidos);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    });
+
+    // Rota para listar os serviços mais consumidos
+    router.get('/servicos/maisConsumidos', async (req: Request, res: Response) => {
+      try {
+        const servicos = await prisma.servico.findMany();
+        const servicosMaisConsumidos = await Promise.all(servicos.map(async (servico: { id: number, name: string }) => {
+          const count = await prisma.servicosConsumidos.count({
+            where: {
+              servicoId: servico.id
+            }
+          });
+          return {
+            nomeServico: servico.name,
+            count
+          };
+        }));
+        servicosMaisConsumidos.sort((a: { count: number }, b: { count: number }) => b.count - a.count);
+        res.json(servicosMaisConsumidos);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    });
+
+    // Rota para listar os produtos mais consumidos por um determinado gênero
+    router.get('/produtos/maisConsumidosPorGenero/:genero', async (req: Request, res: Response) => {
+      try {
+        const { genero } = req.params;
+        const produtos = await prisma.produto.findMany();
+        const produtosMaisConsumidosPorGenero = await Promise.all(produtos.map(async (produto: { id: number, nome: string }) => {
+          const count = await prisma.produtosConsumidos.count({
+            where: {
+              produtoId: produto.id,
+              cliente: {
+                genero: genero
+              }
+            }
+          });
+          return {
+            produtoNome: produto.nome,
+            count
+          };
+        }));
+        produtosMaisConsumidosPorGenero.sort((a: { count: number }, b: { count: number }) => b.count - a.count);
+        res.json(produtosMaisConsumidosPorGenero.slice(0, 10));
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    });
+
+    // Rota para listar os serviços mais consumidos por um determinado gênero
+    router.get('/servicos/maisConsumidosPorGenero/:genero', async (req: Request, res: Response) => {
+      try {
+        const { genero } = req.params;
+        const servicos = await prisma.servico.findMany();
+        const servicosMaisConsumidosPorGenero = await Promise.all(servicos.map(async (servico: { id: number, name: string }) => {
+          const count = await prisma.servicosConsumidos.count({
+            where: {
+              servicoId: servico.id,
+              cliente: {
+                genero: genero
+              }
+            }
+          });
+          return {
+            nomeServico: servico.name,
+            count
+          };
+        }));
+        servicosMaisConsumidosPorGenero.sort((a: { count: number }, b: { count: number }) => b.count - a.count);
+        res.json(servicosMaisConsumidosPorGenero.slice(0, 10));
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    });
 
 router.post('/telefones', async (req: Request, res: Response) => {
     const { ddd, numero } = req.body;
