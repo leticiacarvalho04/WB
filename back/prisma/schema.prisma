@@ -26,7 +26,7 @@ model Cliente {
   cpfValor           String               @unique
   rgs                RG[]
   telefone           telefone[]
-  telefoneId         Int
+  telefoneId         Int?
   dataCadastro       DateTime             @default(now())
   empresa            Empresa              @relation(fields: [empresaId], references: [id])
   empresaId          Int
@@ -39,14 +39,14 @@ model telefone {
   ddd       String
   numero    String
   Cliente   Cliente? @relation(fields: [clienteId], references: [id])
-  clienteId Int
+  clienteId Int?
 }
 
 model RG {
   valor       String   @id
   dataEmissao DateTime
   Cliente     Cliente? @relation(fields: [clienteId], references: [id])
-  clienteId   Int
+  clienteId   Int?
 }
 
 model CPF {
@@ -68,8 +68,8 @@ model Produto {
 
 model produtosConsumidos {
   id        Int     @id @default(autoincrement())
-  cliente   Cliente @relation(fields: [clienteId], references: [id])
-  clienteId Int
+  cliente   Cliente? @relation(fields: [clienteId], references: [id])
+  clienteId Int?
   produto   Produto @relation(fields: [produtoId], references: [id])
   produtoId Int
 }
@@ -86,8 +86,8 @@ model Servico {
 
 model servicosConsumidos {
   id        Int     @id @default(autoincrement())
-  cliente   Cliente @relation(fields: [clienteId], references: [id])
-  clienteId Int
+  cliente   Cliente? @relation(fields: [clienteId], references: [id])
+  clienteId Int?
   servico   Servico @relation(fields: [servicoId], references: [id])
   servicoId Int
 }

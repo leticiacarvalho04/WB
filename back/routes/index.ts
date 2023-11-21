@@ -10,37 +10,63 @@ router.use(express.json());
 
 // Cadastrar cliente
 router.post('/cadastro', async (req: Request, res: Response) => {
-  const { nome, nomeSocial, genero, cpfValor, telefoneId, rgValor, empresaId } = req.body;
+  const { nome, nomeSocial, genero, numeroTelefone, dataEmissao, cpfValor, rgValor, empresaId } = req.body;
   try {
+    // Buscar o telefone pelo número
+    const telefone = await prisma.telefone.findFirst({
+      where: {
+        numero: numeroTelefone,
+      },
+    });    
+
+    if (!telefone) {
+      return res.status(400).json({ error: 'Telefone não encontrado' });
+    }
+
     const novoCliente = await prisma.cliente.create({
       data: {
         nome: nome,
         nomeSocial: nomeSocial,
         genero: genero,
+        telefone:{
+          connect:{
+            id: telefone.id
+          }
+        },
         cpf: {
           connect: {
             valor: cpfValor
           }
         },
-        telefone: {
-          connect: {
-            id: telefoneId
-          }
-        },
         rgs: {
           connect: {
-            valor: rgValor
+            valor: rgValor,
           }
         },
-        empresaId: empresaId,
-        dataCadastro: new Date(),
+        empresa: {
+          connect: {
+            id: empresaId
+          }
+        }
       },
     });
+    console.log(novoCliente);
     res.json(novoCliente);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
+
+router.get('/clientes', async (req: Request, res: Response) => {
+  try {
+    const clientes = await prisma.cliente.findMany();
+    res.json(clientes);
   } catch (error) {
     res.status(500).json(error);
   }
 });
+
 
 router.post('/telefones', async (req: Request, res: Response) => {
     const { ddd, numero } = req.body;
@@ -83,7 +109,7 @@ router.post('/cpfs', async (req: Request, res: Response) => {
     });
     res.json(novoCPF);
   } catch (error) {
-    res.status(500).json({ error: 'Something went wrong' });
+    res.status(500).json(error);
   }
 });
 
