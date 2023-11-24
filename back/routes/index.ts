@@ -202,6 +202,46 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       }
     });    
 
+    // Atualiza um serviço pelo ID
+    router.put('/servico/id/:id', async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const { name, descricao, preco, empresaId } = req.body;
+    
+      try {
+        const servico = await prisma.Servico.upsert({
+          where: { id: Number(id) },
+          update: { name: name, descricao: descricao, price: preco, empresaId: empresaId },
+          create: { name: name, descricao: descricao, price: preco, empresaId: empresaId },
+        });
+    
+        console.log(servico)
+        res.json(servico);
+      } catch (error) {
+        console.log(error)
+        res.status(500).json(error);
+      }
+    });    
+
+    // Atualiza um serviço pelo nome
+    router.put('/servico/nome/:nome', async (req: Request, res: Response) => {
+      const { nome } = req.params;
+      const { novoNome, descricao, preco, empresaId } = req.body;
+
+      try {
+        const servico = await prisma.Servico.upsert({
+          where: { name: nome },
+          update: { name: novoNome, descricao: descricao, price: preco, empresaId: empresaId },
+          create: { name: novoNome, descricao: descricao, price: preco, empresaId: empresaId }
+        });
+
+        res.json(servico);
+      } catch (error) {
+        console.log(error)
+        res.status(500).json(error);
+      }
+    });
+
+
                                               // LISTAGENS //
 
     // Rota para listar os produtos mais consumidos
