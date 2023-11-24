@@ -241,6 +241,45 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       }
     });
 
+    // Atualiza um produto pelo ID
+    router.put('/produto/id/:id', async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const { nome, descricao, preco, quantidadeEstoque, empresaId } = req.body;
+    
+      try {
+        const produto = await prisma.Produto.upsert({
+          where: { id: Number(id) },
+          update: { nome: nome, descricao: descricao, preco: preco, quantidadeEstoque: quantidadeEstoque, empresaId: empresaId },
+          create: { nome: nome, descricao: descricao, preco: preco, quantidadeEstoque: quantidadeEstoque, empresaId: empresaId },
+        });
+    
+        console.log(produto)
+        res.json(produto);
+      } catch (error) {
+        console.log(error)
+        res.status(500).json(error);
+      }
+    });    
+
+    // Atualiza um produto pelo nome
+    router.put('/produto/nome/:nome', async (req: Request, res: Response) => {
+      const { nome } = req.params;
+      const { novoNome, descricao, preco, quantidadeEstoque, empresaId } = req.body;
+
+      try {
+        const produto = await prisma.Produto.upsert({
+          where: { nome: nome },
+          update: { nome: novoNome, descricao: descricao, preco: preco, quantidadeEstoque: quantidadeEstoque, empresaId: empresaId },
+          create: { nome: novoNome, descricao: descricao, preco: preco, quantidadeEstoque: quantidadeEstoque, empresaId: empresaId }
+        });
+
+        res.json(produto);
+      } catch (error) {
+        console.log(error)
+        res.status(500).json(error);
+      }
+    });
+
 
                                               // LISTAGENS //
 
