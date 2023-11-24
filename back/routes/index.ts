@@ -8,7 +8,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 router.use(express.json());
 
-                                              // CADASTROS
+                                              // CADASTROS //
 
 // Cadastrar cliente
 router.post('/cadastroCli', async (req: Request, res: Response) => {
@@ -152,6 +152,56 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
     }
     })
 
+                                              // ATUALIZAÇÕES //
+    // Rota para atualizar um cliente
+    router.put('/clientes/:id', async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const { nome, nomeSocial, genero, cpfValor, rg, ddd, telefone, dataCadastro } = req.body;
+    
+      try {
+        // Atualiza o CPF do cliente
+        await prisma.CPF.upsert({
+          where: { valor: cpfValor },
+          update: { dataEmissao: new Date() },
+          create: { 
+            valor: cpfValor, 
+            dataEmissao: new Date(), 
+            Cliente: { connect: { id: parseInt(id) } } 
+          },
+        });
+        
+        // Atualiza os RGs do cliente
+        if (rg && rg.length > 0) {
+          await prisma.RG.deleteMany({ where: { clienteId: parseInt(id) } });
+          const rgObjects = rg.map((rgItem: any) => ({ valor: rgItem.valor, dataEmissao: new Date(rgItem.dataEmissao), clienteId: parseInt(id) }));
+          await prisma.RG.createMany({ data: rgObjects });
+        }
+
+        // Atualiza os telefones do cliente
+        if (telefone && telefone.length > 0) {
+          await prisma.telefone.deleteMany({ where: { clienteId: parseInt(id) } });
+          const telefoneObjects = telefone.map((telefoneItem: any) => ({ numero: telefoneItem.numero, ddd: telefoneItem.ddd, clienteId: parseInt(id) }));
+          await prisma.telefone.createMany({ data: telefoneObjects });
+        }
+
+        const updatedCliente = await prisma.cliente.update({
+          where: { id: parseInt(id) },
+          data: {
+            nome: nome,
+            nomeSocial: nomeSocial,
+            genero: genero,
+            cpfValor: cpfValor,
+            dataCadastro: dataCadastro
+          },
+        });
+    
+        res.json(updatedCliente);
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });    
+
                                               // LISTAGENS //
 
     // Rota para listar os produtos mais consumidos
@@ -198,7 +248,7 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       }
     });
 
-                                      //LISTAGENS POR GENERO
+                                      //LISTAGENS POR GENERO //
 
     // Rota para listar os produtos mais consumidos por um determinado gênero
     router.get('/produtos/maisConsumidosPorGenero/:genero', async (req: Request, res: Response) => {
@@ -252,7 +302,7 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       }
     });
 
-                                      // LISTAGENS CLIENTE
+                                      // LISTAGENS CLIENTE //
     // listar TODOS os clientes
     router.get('/clientes', async (req: Request, res: Response) => {
       try {
@@ -418,67 +468,67 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
     //Listagem dos 5 que mais consumiram em valor
     router.get('/clientes/maioresConsumidoresValor', async (req: Request, res: Response) => {
       try {
-        // Primeiro, obtenha a lista de todos os clientes
+        // Obtaining the list of all clients
         const clientes = await prisma.cliente.findMany();
-  
-        // Em seguida, para cada cliente, obtenha o valor total de produtos e serviços consumidos
+    
+        // Calculating the total value consumed by each client
         const totalValorConsumidoPorCliente = await Promise.all(clientes.map(async (cliente:{id:number, valor:any}) => {
           const produtosConsumidos = await prisma.produtosConsumidos.findMany({
             where: {
               clienteId: cliente.id
             },
             select: {
-              valor: cliente.valor
+              valor: true
             }
           });
-  
+    
           const servicosConsumidos = await prisma.servicosConsumidos.findMany({
             where: {
               clienteId: cliente.id
             },
             select: {
-              valor: cliente.valor
+              valor: true
             }
           });
-  
-          const valorTotalProdutos = produtosConsumidos.reduce((total: any, produto:any) => total + produto.valor, 0);
-          const valorTotalServicos = servicosConsumidos.reduce((total: any, servico:any) => total + servico.valor, 0);
-  
+    
+          const valorTotalProdutos = produtosConsumidos.reduce((total: any, produto: any) => total + produto.valor, 0);
+          const valorTotalServicos = servicosConsumidos.reduce((total: any, servico: any) => total + servico.valor, 0);
+    
           return {
             clienteId: cliente.id,
             totalValorConsumido: valorTotalProdutos + valorTotalServicos
           };
         }));
-  
-        // Ordene os resultados pelo total consumido em valor em ordem decrescente
+    
+        // Sorting the results by total value consumed in descending order
         totalValorConsumidoPorCliente.sort((a, b) => b.totalValorConsumido - a.totalValorConsumido);
-  
-        // Pegue os 5 primeiros resultados
+    
+        // Taking the top 5 results
         const top5Clientes = totalValorConsumidoPorCliente.slice(0, 5);
-  
-        // Finalmente, obtenha os detalhes completos dos clientes
+    
+        // Getting the complete details of the clients
         const detalhesClientes = await Promise.all(top5Clientes.map(async (cliente:{clienteId: number, nome: string, totalValorConsumido:any}) => {
           const clienteDetalhes = await prisma.cliente.findUnique({
             where: {
               id: cliente.clienteId
             },
             select: {
-              nome: cliente.nome
+              nome: true
             }
           });
-  
+    
           return {
             ...clienteDetalhes,
             totalValorConsumido: cliente.totalValorConsumido
           };
         }));
-  
+    
         console.log(detalhesClientes);
         res.json(detalhesClientes);
       } catch (error) {
         res.status(500).json(error);
       }
-    });  
+    });
 
 // Rotas para Empresa
 /*router.get('/empresa', async (req, res) => {
