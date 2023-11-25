@@ -397,7 +397,98 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       }
     });
 
+                                              // DELETE //
+    // Deleta um cliente pelo id
+    router.delete('/clientes/id/:id', async (req: Request, res: Response) => {
+      const { id } = req.params;
+    
+      try {
+        const cliente = await prisma.cliente.findUnique({
+          where: { id: parseInt(id) },
+        });
+    
+        if (!cliente) {
+          return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+    
+        // Deleta o cliente
+        await prisma.cliente.delete({
+          where: { id: cliente.id },
+        });
+    
+        // Deleta o CPF, RGs e telefones do cliente
+        await prisma.CPF.delete({ where: { valor: cliente.cpfValor } });
+        await prisma.RG.deleteMany({ where: { clienteId: cliente.id } });
+        await prisma.telefone.deleteMany({ where: { clienteId: cliente.id } });
+    
+        res.json({ message: 'Cliente deletado com sucesso' });
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });
 
+    // Deletar cliente pelo nome
+    router.delete('/clientes/nome/:nome', async (req: Request, res: Response) => {
+      const { nome } = req.params;
+    
+      try {
+        const cliente = await prisma.cliente.findFirst({
+          where: { nome: nome },
+        });
+    
+        if (!cliente) {
+          return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        // Deleta o cliente
+        await prisma.cliente.delete({
+          where: { id: cliente.id },
+        });
+    
+        // Deleta o CPF, RGs e telefones do cliente
+        await prisma.CPF.delete({ where: { valor: cliente.cpfValor } });
+        await prisma.RG.deleteMany({ where: { clienteId: cliente.id } });
+        await prisma.telefone.deleteMany({ where: { clienteId: cliente.id } });
+    
+        res.json({ message: 'Cliente deletado com sucesso' });
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });
+
+    // Deletar por CPF
+    router.delete('/clientes/cpf/:cpfValor', async (req: Request, res: Response) => {
+      const { cpfValor } = req.params;
+    
+      try {
+        const cliente = await prisma.cliente.findFirst({
+          where: { cpfValor: cpfValor },
+        });
+    
+        if (!cliente) {
+          return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        // Deleta o cliente
+        await prisma.cliente.delete({
+          where: { id: cliente.id },
+        });
+    
+        // Deleta o CPF, RGs e telefones do cliente
+        await prisma.CPF.delete({ where: { valor: cliente.cpfValor } });
+        await prisma.RG.deleteMany({ where: { clienteId: cliente.id } });
+        await prisma.telefone.deleteMany({ where: { clienteId: cliente.id } });
+    
+        res.json({ message: 'Cliente deletado com sucesso' });
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });
+    
+    
                                               // LISTAGENS //
 
     // Rota para listar os produtos mais consumidos
