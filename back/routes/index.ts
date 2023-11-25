@@ -487,8 +487,67 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
         res.status(500).json(error);
       }
     });
+
+    // Deletar SERVIÇO por id
+    router.delete('/servicos/id/:id', async (req: Request, res: Response) => {
+      const { id } = req.params;
     
+      try {
+        const servico = await prisma.servico.findUnique({
+          where: { id: parseInt(id) },
+        });
     
+        if (!servico) {
+          return res.status(404).json({ error: 'Serviço não encontrado' });
+        }
+    
+        // Primeiro, exclua todos os servicosConsumidos associados a este serviço
+        await prisma.servicosConsumidos.deleteMany({
+          where: { servicoId: servico.id },
+        });
+    
+        // Agora você pode excluir o serviço
+        await prisma.servico.delete({
+          where: { id: servico.id },
+        });
+    
+        res.json({ message: 'Serviço deletado com sucesso' });
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });
+    
+    // deletar SERVIÇO pelo nome
+    router.delete('/servicos/nome/:name', async (req: Request, res: Response) => {
+      const { name } = req.params;
+    
+      try {
+        const servico = await prisma.servico.findUnique({
+          where: { name: name },
+        });
+    
+        if (!servico) {
+          return res.status(404).json({ error: 'Serviço não encontrado' });
+        }
+    
+        // Primeiro, exclua todos os servicosConsumidos associados a este serviço
+        await prisma.servicosConsumidos.deleteMany({
+          where: { servicoId: servico.id },
+        });
+    
+        // Agora você pode excluir o serviço
+        await prisma.servico.delete({
+          where: { id: servico.id },
+        });
+    
+        res.json({ message: 'Serviço deletado com sucesso' });
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });    
+
                                               // LISTAGENS //
 
     // Rota para listar os produtos mais consumidos

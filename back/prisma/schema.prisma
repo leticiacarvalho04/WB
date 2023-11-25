@@ -81,7 +81,7 @@ model Servico {
   descricao          String
   empresa            Empresa              @relation(fields: [empresaId], references: [id])
   empresaId          Int
-  servicosConsumidos servicosConsumidos[]
+  servicosConsumidos servicosConsumidos[] 
 }
 
 model servicosConsumidos {
