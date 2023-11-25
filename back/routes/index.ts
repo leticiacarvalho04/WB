@@ -260,6 +260,65 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       }
     });             
 
+    // Atualizar o cliente pelo cpf
+    router.put('/clientes/cpf/:cpfValor', async (req: Request, res: Response) => {
+      const { cpfValor } = req.params;
+      const { novoNome, nomeSocial, genero, telefone, ddd, numeroTelefone, rgValor, empresaId } = req.body;
+    
+      try {
+        const cliente = await prisma.cliente.findFirst({
+          where: { cpfValor: cpfValor },
+        });
+    
+        if (!cliente) {
+          return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+    
+        // Atualiza o CPF do cliente
+        await prisma.CPF.upsert({
+          where: { valor: cpfValor },
+          update: { dataEmissao: new Date() },
+          create: { 
+            valor: cpfValor, 
+            dataEmissao: new Date(), 
+          },
+        });        
+            
+        // Atualiza os RGs do cliente
+        await prisma.RG.upsert({
+          where: { valor: rgValor },
+          update: { dataEmissao: new Date() },
+          create: { 
+            valor: rgValor, 
+            dataEmissao: new Date(), 
+          },
+        });
+    
+        // Atualiza os telefones do cliente
+        if (telefone && telefone.length > 0) {
+          await prisma.telefone.deleteMany({ where: { clienteId: parseInt(cliente.id) } });
+          const telefoneObjects = telefone.map((telefoneItem: any) => ({ numero: telefoneItem.numero, ddd: telefoneItem.ddd, clienteId: parseInt(cliente.id) }));
+          await prisma.telefone.createMany({ data: telefoneObjects });
+        }
+    
+        const updatedCliente = await prisma.cliente.update({
+          where: { id: cliente.id },
+          data: {
+            nome: novoNome,
+            nomeSocial: nomeSocial,
+            genero: genero,
+            cpfValor: cpfValor,
+            empresaId: empresaId
+          },
+        });
+    
+        res.json(updatedCliente);
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });    
+
     // Atualiza um serviço pelo ID
     router.put('/servico/id/:id', async (req: Request, res: Response) => {
       const { id } = req.params;
