@@ -588,6 +588,114 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       }
     });
 
+                                                  // COMPRAR //
+    // Cadastrar a compra PRODUTO no cliente pelo id
+    router.post('/cliente/id/:id/produto', async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const { produtoId } = req.body;
+    
+      try {
+        const cliente = await prisma.cliente.findUnique({
+          where: { id: Number(id) },
+        });
+    
+        if (!cliente) {
+          return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+    
+        const produto = await prisma.produto.findUnique({
+          where: { id: Number(produtoId) },
+        });
+    
+        if (!produto) {
+          return res.status(404).json({ error: 'Produto não encontrado' });
+        }
+    
+        const produtoConsumido = await prisma.produtosConsumidos.create({
+          data: {
+            clienteId: Number(id),
+            produtoId: Number(produtoId),
+          },
+        });
+    
+        return res.json(produtoConsumido);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Algo deu errado' });
+      }
+    });    
+
+    // Cadastrar a compra PRODUTO no cliente pelo nome
+    router.post('/cliente/nome/:nome/produto', async (req: Request, res: Response) => {
+      const { nome } = req.params;
+      const { produtoId } = req.body;
+
+      try {
+        const cliente = await prisma.cliente.findFirst({
+          where: { nome },
+        });
+
+        if (!cliente) {
+          return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        const produto = await prisma.produto.findUnique({
+          where: { id: Number(produtoId) },
+        });
+
+        if (!produto) {
+          return res.status(404).json({ error: 'Produto não encontrado' });
+        }
+
+        const produtoConsumido = await prisma.produtosConsumidos.create({
+          data: {
+            clienteId: cliente.id,
+            produtoId: Number(produtoId),
+          },
+        });
+
+        return res.json(produtoConsumido);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+      }
+    }); 
+
+    // Cadastrar a compra PRODUTO no cliente pelo id
+    router.post('/cliente/cpf/:cpf/produto', async (req: Request, res: Response) => {
+      const { cpf } = req.params;
+      const { produtoId } = req.body;
+    
+      try {
+        const cliente = await prisma.cliente.findUnique({
+          where: { cpfValor: cpf },
+        });
+    
+        if (!cliente) {
+          return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+    
+        const produto = await prisma.produto.findUnique({
+          where: { id: Number(produtoId) },
+        });
+    
+        if (!produto) {
+          return res.status(404).json({ error: 'Produto não encontrado' });
+        }
+    
+        const produtoConsumido = await prisma.produtosConsumidos.create({
+          data: {
+            clienteId: cliente.id,
+            produtoId: Number(produtoId),
+          },
+        });
+    
+        return res.json(produtoConsumido);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Algo deu errado' });
+      }
+    });
 
                                               // LISTAGENS //
 
