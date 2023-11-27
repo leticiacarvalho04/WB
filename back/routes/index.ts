@@ -546,7 +546,48 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
         console.log(error);
         res.status(500).json(error);
       }
-    });    
+    });
+    
+    // Rota para buscar um PRODUTO pelo id
+    router.get('/produtos/id/:id', async (req: Request, res: Response) => {
+      const { id } = req.params;
+
+      try {
+        const produto = await prisma.produto.findUnique({
+          where: { id: parseInt(id) },
+        });
+
+        if (!produto) {
+          return res.status(404).json({ error: 'Produto não encontrado' });
+        }
+
+        res.json(produto);
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });
+
+    // Rota para buscar um PRODUTO pelo nome
+    router.get('/produtos/nome/:name', async (req: Request, res: Response) => {
+      const { name } = req.params;
+
+      try {
+        const produto = await prisma.produto.findUnique({
+          where: { nome: name },
+        });
+
+        if (!produto) {
+          return res.status(404).json({ error: 'Produto não encontrado' });
+        }
+
+        res.json(produto);
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });
+
 
                                               // LISTAGENS //
 
