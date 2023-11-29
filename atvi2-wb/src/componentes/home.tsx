@@ -1,6 +1,7 @@
 import { Component } from "react";
 import 'materialize-css/dist/css/materialize.min.css';
 import './home.css'
+import React from "react";
 
 type Props = {
     tema: string;

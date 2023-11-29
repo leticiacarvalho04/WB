@@ -3,6 +3,7 @@ import { Component } from "react";
 import {Navigate} from "react-router-dom"
 import 'materialize-css/dist/css/materialize.min.css'
 import M from 'materialize-css'
+import React from "react";
 
 type obj = {
     nome?: string;
