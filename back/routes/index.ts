@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import { connect } from 'http2';
 const express = require('express');
+const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 
 const router = express.Router();
+router.use(cors());
 
 const prisma = new PrismaClient();
 router.use(express.json());
@@ -933,106 +935,34 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
 
     // Listagem dos 10 clientes que mais consumiram produtos ou serviços
     router.get('/clientes/maisConsumidores', async (req: Request, res: Response) => {
-        try {
-          // Primeiro, obtenha a contagem de produtos consumidos por cada cliente
-          const produtosConsumidosPorCliente = await prisma.produtosConsumidos.groupBy({
-            by: ['clienteId'],
-            _count: true
-          });
-
-          // Em seguida, obtenha a contagem de serviços consumidos por cada cliente
-          const servicosConsumidosPorCliente = await prisma.servicosConsumidos.groupBy({
-            by: ['clienteId'],
-            _count: true
-          });
-
-          // Agora, combine os resultados
-          const totalConsumidoPorCliente = produtosConsumidosPorCliente.map((cliente: { clienteId: number, _count: number }) => {
-            const servicosConsumidos = servicosConsumidosPorCliente.find((c: { clienteId: number, _count: number }) => c.clienteId === cliente.clienteId);
-            return {
-              clienteId: cliente.clienteId,
-              totalConsumido: cliente._count + (servicosConsumidos ? servicosConsumidos._count : 0)
-            };
-          });
-
-          // Ordene os resultados pelo total consumido
-          totalConsumidoPorCliente.sort((a: { totalConsumido: number }, b: { totalConsumido: number }) => b.totalConsumido - a.totalConsumido);
-
-          // Pegue os 10 primeiros resultados
-          const top10Clientes = totalConsumidoPorCliente.slice(0, 10);
-
-          // Finalmente, obtenha os detalhes completos dos clientes
-          const detalhesClientes = await Promise.all(top10Clientes.map(async (cliente: { clienteId: number }) => {
-            const clienteDetalhes = await prisma.cliente.findUnique({
-              where: {
-                id: cliente.clienteId
-              },
-              select: {
-                nome: true
-              }
-            });
-
-            const produtosConsumidosCount = await prisma.produtosConsumidos.count({
-              where: {
-                clienteId: cliente.clienteId
-              }
-            });
-
-            const servicosConsumidosCount = await prisma.servicosConsumidos.count({
-              where: {
-                clienteId: cliente.clienteId
-              }
-            });
-
-            return {
-              ...clienteDetalhes,
-              produtosConsumidos: produtosConsumidosCount,
-              servicosConsumidos: servicosConsumidosCount
-            };
-          }));
-
-          console.log(detalhesClientes);
-          res.json(detalhesClientes);
-        } catch (error) {
-          res.status(500).json(error);
-        }
-      });
-
-    // Listar os 10 clientes que menos consumiram
-    router.get('/clientes/menosConsumidores', async (req: Request, res: Response) => {
       try {
-        // Primeiro, obtenha a lista de todos os clientes
         const clientes = await prisma.cliente.findMany();
-  
-        // Em seguida, para cada cliente, obtenha a contagem de produtos e serviços consumidos
-        const totalConsumidoPorCliente = await Promise.all(clientes.map(async (cliente:{id: number, nome: string}) => {
+    
+        const totalConsumidoPorCliente = await Promise.all(clientes.map(async (cliente: { id: number, nome: string }) => {
           const produtosConsumidosCount = await prisma.produtosConsumidos.count({
             where: {
               clienteId: cliente.id
             }
           });
-  
+    
           const servicosConsumidosCount = await prisma.servicosConsumidos.count({
             where: {
               clienteId: cliente.id
             }
           });
-  
+    
           return {
             clienteId: cliente.id,
             nome: cliente.nome,
             totalConsumido: produtosConsumidosCount + servicosConsumidosCount
           };
         }));
-  
-        // Ordene os resultados pelo total consumido em ordem ascendente
-        totalConsumidoPorCliente.sort((a, b) => a.totalConsumido - b.totalConsumido);
-  
-        // Pegue os 10 primeiros resultados
+    
+        totalConsumidoPorCliente.sort((a, b) => b.totalConsumido - a.totalConsumido);
+    
         const top10Clientes = totalConsumidoPorCliente.slice(0, 10);
-  
-        // Finalmente, obtenha os detalhes completos dos clientes
-        const detalhesClientes = await Promise.all(top10Clientes.map(async (cliente:{clienteId:number, nome:string}) => {
+    
+        const detalhesClientes = await Promise.all(top10Clientes.map(async (cliente: { clienteId: number, nome: string }) => {
           const clienteDetalhes = await prisma.cliente.findUnique({
             where: {
               id: cliente.clienteId
@@ -1041,32 +971,96 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
               nome: true
             }
           });
-  
+    
           const produtosConsumidosCount = await prisma.produtosConsumidos.count({
             where: {
               clienteId: cliente.clienteId
             }
           });
-  
+    
           const servicosConsumidosCount = await prisma.servicosConsumidos.count({
             where: {
               clienteId: cliente.clienteId
             }
           });
-  
+    
           return {
             ...clienteDetalhes,
             produtosConsumidos: produtosConsumidosCount,
             servicosConsumidos: servicosConsumidosCount
           };
         }));
-  
-        console.log(detalhesClientes);
+    
         res.json(detalhesClientes);
       } catch (error) {
         res.status(500).json(error);
       }
-    });  
+    });
+    
+    // Listagem dos 10 clientes que menos consumiram produtos ou serviços
+    router.get('/clientes/menosConsumidores', async (req: Request, res: Response) => {
+      try {
+        const clientes = await prisma.cliente.findMany();
+    
+        const totalConsumidoPorCliente = await Promise.all(clientes.map(async (cliente: { id: number, nome: string }) => {
+          const produtosConsumidosCount = await prisma.produtosConsumidos.count({
+            where: {
+              clienteId: cliente.id
+            }
+          });
+    
+          const servicosConsumidosCount = await prisma.servicosConsumidos.count({
+            where: {
+              clienteId: cliente.id
+            }
+          });
+    
+          return {
+            clienteId: cliente.id,
+            nome: cliente.nome,
+            totalConsumido: produtosConsumidosCount + servicosConsumidosCount
+          };
+        }));
+    
+        // Ordenar do menor para o maior total consumido
+        totalConsumidoPorCliente.sort((a, b) => a.totalConsumido - b.totalConsumido);
+    
+        const bottom10Clientes = totalConsumidoPorCliente.slice(0, 10);
+    
+        const detalhesClientes = await Promise.all(bottom10Clientes.map(async (cliente: { clienteId: number, nome: string }) => {
+          const clienteDetalhes = await prisma.cliente.findUnique({
+            where: {
+              id: cliente.clienteId
+            },
+            select: {
+              nome: true
+            }
+          });
+    
+          const produtosConsumidosCount = await prisma.produtosConsumidos.count({
+            where: {
+              clienteId: cliente.clienteId
+            }
+          });
+    
+          const servicosConsumidosCount = await prisma.servicosConsumidos.count({
+            where: {
+              clienteId: cliente.clienteId
+            }
+          });
+    
+          return {
+            ...clienteDetalhes,
+            produtosConsumidos: produtosConsumidosCount,
+            servicosConsumidos: servicosConsumidosCount
+          };
+        }));
+    
+        res.json(detalhesClientes);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    });    
 
     //Listagem dos 5 que mais consumiram em valor
     router.get('/clientes/maioresConsumidoresValor', async (req: Request, res: Response) => {
@@ -1132,6 +1126,32 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
         res.status(500).json(error);
       }
     });
+
+    // listar todos os PRODUTOS
+    router.get('/produto', async (req: Request,res: Response)=>{
+      try{
+        const produtos = await prisma.produto.findMany();
+        if(!produtos){
+          throw new Error('Não foi possível encontrar nenhum produto');
+        }
+        res.json(produtos);
+        }catch(err){
+          res.status(400).json(err);
+        }
+    })
+
+    // listar todos os SERVIÇOS
+    router.get('/produto', async (req: Request,res: Response)=>{
+      try{
+        const serviços = await prisma.servico.findMany();
+        if(!serviços){
+          throw new Error('Não foi possível encontrar nenhum produto');
+        }
+        res.json(serviços);
+        }catch(err){
+          res.status(400).json(err);
+        }
+    })
 
 // Rotas para Empresa
 /*router.get('/empresa', async (req, res) => {

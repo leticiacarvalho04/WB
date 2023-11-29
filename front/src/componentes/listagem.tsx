@@ -1,149 +1,157 @@
-import React, { Component } from "react";
-import './listagem.css'
+import React, { Component, useEffect, useState } from "react";
+import './listagem.css';
+import axios from "axios";
 
-type Props = {
-    id: string;
-    tema: string;
-  };
-  
-  interface Produto {
-    id: string;
+interface Cliente{
     nome: string;
-    preco: number;
-    genero: string; // Adicionado campo de gênero
-  }
-  
-  interface Servico {
-    id: string;
-    nome: string;
-    preco: number;
-    genero: string; // Adicionado campo de gênero
-  }
-  
-  interface Cliente {
-    id: string;
-    nome: string;
-    quantidadeConsumida: number;
-    genero: string; // Adicionado campo de gênero
-  }
-  
-  interface State {
+    produtosConsumidos: number;
+    servicosConsumidos:number;
+}
+
+interface Produto{
+    produtoNome: string;
+    count: number;
+}
+
+interface Servico{
+    servicoNome: string;
+    count: number;
+}
+
+interface State {
     activeTab: string;
-    id: string;
-    nome: string;
-    tema: string;
-  }
-  
-  const servicos: Servico[] = [
-    { id: '1', nome: 'Corte de cabelo', preco: 50.0, genero: 'unissex' },
-    { id: '2', nome: 'Manicure', preco: 20.0, genero: 'feminino' },
-    { id: '3', nome: 'Pedicure', preco: 25.0, genero: 'feminino' },
-    // adicione mais serviços conforme necessário
-  ];
-  
-  const produtos: Produto[] = [
-    { id: '1', nome: 'Perfume feminino', preco: 100.0, genero: 'feminino' },
-    { id: '2', nome: 'Batom matte', preco: 15.0, genero: 'feminino' },
-    { id: '3', nome: 'Perfume masculino', preco: 120.0, genero: 'masculino' },
-    // adicione mais produtos conforme necessário
-  ];
-  
-  const clientes: Cliente[] = [
-    { id: '1', nome: 'Maria Oliveira', quantidadeConsumida: 25, genero: 'feminino' },
-    { id: '2', nome: 'Mariana Santos', quantidadeConsumida: 20, genero: 'feminino' },
-    { id: '3', nome: 'Audrey Duarte', quantidadeConsumida: 18, genero: 'feminino' },
-    // adicione mais clientes conforme necessário
-  ];
+    top10Clientes: Cliente[];
+    low10Clientes: Cliente[];
+    produtos: Produto[];
+    servicos: Servico[];
+    produtosGeneroFeminino: Produto[];
+    produtosGeneroMasculino: Produto[];
+    servicosGeneroFeminino: Servico[];
+    servicosGeneroMasculino: Servico[];
+}
 
-export class Listagem extends Component<Props, State> {
-    constructor(props: Props) {
+export class Listagem extends Component<{}, State> {
+    constructor(props: {}) {
         super(props);
         this.state = {
-            activeTab: 'produto',
-            id: props.id,
-            nome: '',
-            tema: props.tema,
+            activeTab: "produto",
+            top10Clientes: [],
+            low10Clientes: [],
+            produtos: [],
+            servicos: [],
+            produtosGeneroFeminino: [],
+            produtosGeneroMasculino: [],
+            servicosGeneroFeminino: [],
+            servicosGeneroMasculino: []
         };
     }
 
-    calcularMaisConsumidosPorGenero = (itens: { genero: string }[]) => {
-        const contagemPorGenero: { [key: string]: number } = {};
-    
-        itens.forEach(item => {
-          contagemPorGenero[item.genero] = (contagemPorGenero[item.genero] || 0) + 1;
-        });
-    
-        return contagemPorGenero;
-      };
-    
-      // Função para obter os itens mais consumidos por gênero
-      obterMaisConsumidosPorGenero = (itens: { id: string, nome: string, preco?: number, quantidadeConsumida?: number, genero: string }[]) => {
-        const contagemPorGenero = this.calcularMaisConsumidosPorGenero(itens);
-    
-        // Filtra os itens para cada gênero
-        const itensPorGenero: { [key: string]: { id: string, nome: string, preco?: number, quantidadeConsumida?: number }[] } = {};
-        itens.forEach(item => {
-          if (!itensPorGenero[item.genero]) {
-            itensPorGenero[item.genero] = [];
-          }
-          itensPorGenero[item.genero].push(item);
-        });
-    
-        return itensPorGenero;
-      };
-
-      obterClientesMenosConsumidores = (clientes: Cliente[]) => {
-        // Ordena os clientes pelo total de consumo em ordem crescente
-        const clientesOrdenados = clientes.sort((a, b) => a.quantidadeConsumida - b.quantidadeConsumida);
-    
-        // Inverte a ordem para obter do menor para o maior consumo
-        const clientesMenosConsumidores = clientesOrdenados.slice(0, 10).reverse();
-    
-        return clientesMenosConsumidores;
-      };
+    fetchClientesMaisConsumidores = () => {
+        axios.get("/clientes/maisConsumidores")
+            .then((response) => {
+                console.log(response.data);
+                this.setState({ top10Clientes: response.data });
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
+            });
+    };
 
     handleTabClick = (tabName: string) => {
-        this.setState({
-            activeTab: tabName
+        this.setState({ activeTab: tabName });
+    };
+
+    clientesMenosConsumidores = () => {
+        axios.get('/clientes/menosConsumidores')
+        .then((response) => {
+            console.log(response.data);
+            this.setState({ low10Clientes: response.data });
+            })
+        .catch((error) => {
+            console.error("Erro ao buscar os dados:", error);
         });
     };
 
-    componentDidMount() {
-        const tabs = document.querySelectorAll('.tabs');
-        M.Tabs.init(tabs);
+    produto = ()=>{
+        axios.get('/produtos')
+        .then((response)=>{
+            console.log(response.data);
+            this.setState({ produtos: response.data });
+        }).catch((err)=>console.log(err))
     }
 
-    renderLista = (itens: { id: string, nome: string, preco?: number, quantidadeConsumida?: number }[]) => (
-        <ul>
-            {itens.map(item => (
-                <li key={item.id}>
-                    {`${item.id} - ${item.nome} - ${item.preco ? item.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : item.quantidadeConsumida + ' unidades'}`}
-                </li>
-            ))}
-        </ul>
-    );
+    servicos = ()=>{
+        axios.get('/servicos')
+        .then((response)=>{
+            console.log(response.data);
+            this.setState({ servicos: response.data });
+        }).catch((err)=>console.log(err))
+    }
 
-    obterClientesMaisConsumidores = (clientes: Cliente[]) => {
-        // Ordena os clientes pelo total de consumo em ordem decrescente
-        const clientesOrdenados = clientes.sort((a, b) => b.quantidadeConsumida - a.quantidadeConsumida);
-    
-        // Seleciona os primeiros 10 clientes (os que mais consumiram)
-        const clientesMaisConsumidores = clientesOrdenados.slice(0, 10);
-    
-        return clientesMaisConsumidores;
-      };
+    produtosGeneroFeminino = () => {
+        axios.get('http://localhost:5001/produtos/maisConsumidosPorGenero/Feminino')
+            .then((response) => {
+                const produtosConsumidos: Produto[] = response.data.map((item: any) => ({
+                    nome: item.produtoNome,
+                    count: item.count
+                }));
+                this.setState({ produtos: produtosConsumidos });
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
+            });
+
+    }
+
+    produtosGeneroMasculino = () => {
+        axios.get('http://localhost:5001/produtos/maisConsumidosPorGenero/Masculino')
+            .then((response) => {
+                const produtosConsumidos: Produto[] = response.data.map((item: any) => ({
+                    nome: item.produtoNome,
+                    count: item.count
+                }));
+                this.setState({ produtos: produtosConsumidos });
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
+            });
+    }
+
+    servicosGeneroFeminino = () => {
+        axios.get('/servicos/maisConsumidosPorGenero/Feminino')
+            .then((response) => {
+                console.log(response.data);
+                this.setState({ servicosGeneroFeminino: response.data });
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
+            });
+    }
+
+    servicosGeneroMasculino = () => {
+        axios.get('/servicos/maisConsumidosPorGenero/Masculino')
+            .then((response) => {
+                console.log(response.data);
+                this.setState({ servicosGeneroMasculino: response.data });
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
+            });
+    }
+
+    componentDidMount(){
+        const tabs = document.querySelectorAll('.tabs');
+        M.Tabs.init(tabs);
+        this.produto();
+        this.servicos();
+        this.produtosGeneroFeminino();
+        this.produtosGeneroMasculino();
+        this.servicosGeneroFeminino();
+        this.servicosGeneroMasculino();
+    }
 
     render() {
-        const itensMaisConsumidosPorGenero = this.obterMaisConsumidosPorGenero(
-            this.state.activeTab === 'produto' ? produtos :
-              this.state.activeTab === 'servico' ? servicos :
-                clientes
-          );
-
-          const clientesMenosConsumidores = this.obterClientesMenosConsumidores(clientes);
-
-          const clientesMaisConsumidores = this.obterClientesMaisConsumidores(clientes);
-
+        
         return (
             <>
             <div className="row center-align">
@@ -164,18 +172,14 @@ export class Listagem extends Component<Props, State> {
                     <div className="card">
                         <div className="card-content">
                             <span className="card-title">Listar Produto</span>
-                            {this.renderLista(produtos)}
+                            {this.produto()}
                         </div>
                     </div>
                     <div className="card">
                         <div className="card-content">
                         <span className="card-title">Produtos mais consumidos por gênero</span>
-                        {Object.keys(itensMaisConsumidosPorGenero).map((genero, index) => (
-                            <div key={index}>
-                            <h5>{genero}</h5>
-                            {this.renderLista(itensMaisConsumidosPorGenero[genero])}
-                            </div>
-                        ))}
+                        {this.produtosGeneroFeminino()}
+                        {this.produtosGeneroMasculino()}
                         </div>
                     </div>
                 </div>
@@ -183,37 +187,45 @@ export class Listagem extends Component<Props, State> {
                     <div className="card">
                         <div className="card-content">
                             <span className="card-title">Listar serviços</span>
-                            {this.renderLista(servicos)}
+                            {this.servicos()}
                         </div>
                         <div className="row" style={{ marginBottom: '20px' }}></div>
                     </div>
                     <div className="card">
                         <div className="card-content">
                         <span className="card-title">Serviços mais consumidos por gênero</span>
-                        {Object.keys(itensMaisConsumidosPorGenero).map((genero, index) => (
-                            <div key={index}>
-                            <h5>{genero}</h5>
-                            {this.renderLista(itensMaisConsumidosPorGenero[genero])}
-                            </div>
-                        ))}
+                        {this.servicosGeneroFeminino()}
+                        {this.servicosGeneroMasculino()}
                         </div>
                     </div>
                 </div>
                 </div>
                 <div id="clienteTab" className={`col s12 ${this.state.activeTab === 'cliente' ? 'active' : ''}`}>
-                    <div className="card">
-                        <div className="card-content">
-                            <span className="card-title">Top 10 clientes que mais consumiram</span>
-                            {this.renderLista(clientesMaisConsumidores)}
-                        </div>
-                    </div>
-                    <div className="card">
-                        <div className="card-content">
-                            <span className="card-title">Top 10 clientes que menos consumiram</span>
-                            {this.renderLista(clientesMenosConsumidores)}
-                        </div>
+                <div className="card">
+                    <div className="card-content">
+                        <span className="card-title">Top 10 clientes que mais consumiram</span>
+                        <ul className="collection">
+                            {this.state.top10Clientes.map((cliente: Cliente, index: number) => (
+                                <li key={index} className="collection-item">
+                                    {cliente.nome}: {cliente.produtosConsumidos + cliente.servicosConsumidos} unidades
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
+                <div className="card">
+                    <div className="card-content">
+                        <span className="card-title">Top 10 clientes que menos consumiram</span>
+                        <ul className="collection">
+                            {this.state.low10Clientes.map((cliente: Cliente, index: number) => (
+                                <li key={index} className="collection-item">
+                                    {cliente.nome}: {cliente.produtosConsumidos + cliente.servicosConsumidos} unidades
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
                 </>
         );
     }

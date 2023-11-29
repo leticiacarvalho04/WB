@@ -25,14 +25,14 @@ export function AppRoutes() {
                     { nome: 'Listagem', rota:'/listagem'}
                 ]} seletorView={() => {}} />
                 <Routes>
-                    <Route path="/" element={<Home tema="purple darken-2" />} />
+                    <Route path="/" element={<Home />} />
                     <Route path="/clientes" element={<Clientes />} />
                     <Route path="/produtos" element={<ProdutoDetails tema="purple darken-2" id={""} />} />
                     <Route path="/servicos" element={<Servicos id={""} tema={""} />} />
                     <Route path="/cadastroprodserv" element={<FormularioCadastroProduto tema="purple darken-2" />} />
                     <Route path="/cadastrocliente" element={<FormularioCadastroCliente tema="purple darken-2" />} />
                     <Route path="/compraCliente" element={<Compra id={""} cpf={""} tema={""} />}/>
-                    <Route path="/listagem" element={<Listagem id={""} tema={""} />}/>
+                    <Route path="/listagem" element={<Listagem />}/>
                 </Routes>
             </div>
         </BrowserRouter>

@@ -1,38 +1,34 @@
-import { Component } from "react";
+import React, { useEffect, useState } from "react";
 import 'materialize-css/dist/css/materialize.min.css';
-import './home.css'
+import './home.css';
+import axios from "axios";
 
-type Props = {
-    tema: string;
-};
+export default function Home() {
+    const [top10Clientes, setTop10Clientes] = useState<ClienteMaisConsumidor[]>([]);
 
-interface ClienteMaisConsumidor {
-    nome: string;
-    quantidade: number;
-}
+    useEffect(() => {
+        fetchClientesMaisConsumidores();
+    }, []);
 
-export default class Home extends Component<Props> {
-    componentDidMount() {
-        const tabs = document.querySelectorAll('.tabs');
-        M.Tabs.init(tabs);
+    interface ClienteMaisConsumidor {
+        nome: string;
+        produtosConsumidos: number;
+        servicosConsumidos: number;
     }
-    render() {
-        const clientesMaisConsumidores: ClienteMaisConsumidor[] = [
-            { nome: 'Maria Oliveira', quantidade: 25 },
-            { nome: 'Mariana Santos', quantidade: 20 },
-            { nome: 'Audrey Duarte', quantidade: 18 },
-            { nome: 'Juliana Oliveira', quantidade: 15 },
-            { nome: 'Ana Clara', quantidade: 12 },
-            // Adicione mais clientes conforme necessário
-        ];
 
-        const clientesOrdenados = clientesMaisConsumidores.sort((a, b) => b.quantidade - a.quantidade);
+    const fetchClientesMaisConsumidores = () => {
+        axios.get('http://localhost:5001/clientes/maisConsumidores')
+            .then(response => {
+                console.log(response.data); // Verifique os dados recebidos no console
+                setTop10Clientes(response.data);
+            })
+            .catch(error => {
+                console.error('Erro ao buscar os dados:', error);
+            });
+    }
 
-        // Seleciona os top 10 clientes
-        const top10Clientes = clientesOrdenados.slice(0, 10);
-
-        return (
-            <>
+    return (
+        <>
             <div className="cards-container">
                 <div className="row center-align">
                     <div className="dois">
@@ -40,8 +36,10 @@ export default class Home extends Component<Props> {
                             <div className="card-content">
                                 <span className="card-title">Clientes Mais Consumidores</span>
                                 <ul className="collection">
-                                    {top10Clientes.map((cliente, index) => (
-                                        <li key={index} className="collection-item">{cliente.nome}: {cliente.quantidade} unidades</li>
+                                    {top10Clientes.slice(0, 5).map((cliente, index) => (
+                                        <li key={index} className="collection-item">
+                                            {cliente.nome}: {cliente.produtosConsumidos + cliente.servicosConsumidos} unidades
+                                        </li>
                                     ))}
                                 </ul>
                                 <p><a href="/listagem#clienteTab">Visualizar a lista completa</a></p>
@@ -140,4 +138,3 @@ export default class Home extends Component<Props> {
             </>
         );
     }
-}
