@@ -1,6 +1,5 @@
-import { Component, useState } from "react";
-import 'materialize-css/dist/css/materialize.min.css';
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
     id: string,
@@ -19,9 +18,9 @@ interface State {
 }
 
 const clientes = [
-    { id: '1', nome: 'João da Silva', cpf:'12345678900' },
-    { id: '2', nome: 'Maria Oliveira', cpf:'98765432100' },
-    { id: '3', nome: 'Lucas Oliveira', cpf:'55555555500' },
+    { id: '1', nome: 'João da Silva', cpf: '12345678900' },
+    { id: '2', nome: 'Maria Oliveira', cpf: '98765432100' },
+    { id: '3', nome: 'Lucas Oliveira', cpf: '55555555500' },
     // adicione mais produtos conforme necessário
 ];
 
@@ -42,6 +41,7 @@ function buscarCliente(query: string) {
     // retorna null se o cliente não for encontrado
     return null;
 }
+
 export default function ClienteDetails(props: any) {
     const [state, setState] = useState({
         id: props.id,
@@ -51,6 +51,7 @@ export default function ClienteDetails(props: any) {
         buscou: false,
     });
 
+    const navigate = useNavigate();
 
     const handleMetodoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setState({
@@ -61,7 +62,7 @@ export default function ClienteDetails(props: any) {
 
     const handleBuscarClick = () => {
         const { metodoSelecionado, cpf, nome, id } = state;
-    
+
         let cliente;
         if (metodoSelecionado) {
             if (metodoSelecionado === '1' && cpf) {
@@ -73,11 +74,11 @@ export default function ClienteDetails(props: any) {
             } else if (metodoSelecionado === '3' && id) {
                 console.log(`Busca por ID: ${id}`);
                 cliente = buscarCliente(id)
-            } 
-            
+            }
+
         }
-        
-        if (cliente){
+
+        if (cliente) {
             setState({
                 id: cliente.id,
                 nome: cliente.nome,
@@ -87,44 +88,44 @@ export default function ClienteDetails(props: any) {
             })
         }
     }
-    
+
     const renderInputs = () => {
         const { metodoSelecionado } = state;
-    
+
         return (
             <>
                 {metodoSelecionado === '1' && (
                     <div className="input-field col s12">
-                        <input 
-                            id="cpf" 
-                            type="text" 
-                            className="validate" 
-                            value={state.cpf} 
-                            onChange={(e) => setState(prevState => ({ ...prevState, cpf: e.target.value }))} 
+                        <input
+                            id="cpf"
+                            type="text"
+                            className="validate"
+                            value={state.cpf}
+                            onChange={(e) => setState(prevState => ({ ...prevState, cpf: e.target.value }))}
                         />
                         <label htmlFor="cpf">CPF</label>
                     </div>
                 )}
                 {metodoSelecionado === '2' && (
                     <div className="input-field col s12">
-                        <input 
-                            id="nome" 
-                            type="text" 
-                            className="validate" 
-                            value={state.nome} 
-                            onChange={(e) => setState(prevState => ({ ...prevState, nome: e.target.value }))} 
+                        <input
+                            id="nome"
+                            type="text"
+                            className="validate"
+                            value={state.nome}
+                            onChange={(e) => setState(prevState => ({ ...prevState, nome: e.target.value }))}
                         />
                         <label htmlFor="nome">Nome</label>
                     </div>
                 )}
                 {metodoSelecionado === '3' && (
                     <div className="input-field col s12">
-                        <input 
-                            id="id" 
-                            type="text" 
-                            className="validate" 
-                            value={state.id} 
-                            onChange={(e) => setState(prevState => ({ ...prevState, id: e.target.value }))} 
+                        <input
+                            id="id"
+                            type="text"
+                            className="validate"
+                            value={state.id}
+                            onChange={(e) => setState(prevState => ({ ...prevState, id: e.target.value }))}
                         />
                         <label htmlFor="id">ID</label>
                     </div>
@@ -138,19 +139,19 @@ export default function ClienteDetails(props: any) {
                 </div>
             </>
         );
-    }    
-    
+    }
+
     const handleDeletarClick = () => {
         alert('Cliente deletado!');
-    }    
+    }
 
-    const componentDidMount =()=> {
+    const componentDidMount = () => {
         handleBuscarClick();
     }
 
     const renderDetalhesCliente = () => {
         const { nome, cpf, id } = state;
-    
+
         return (
             <div className="card">
                 <div className="card-content">
@@ -170,43 +171,43 @@ export default function ClienteDetails(props: any) {
             </div>
         );
     }
-    
-    const handleAtualizarClick = (idCliente: any) => {
-        // Use navigate ou history para redirecionar para a rota do formulário de atualização
-        props.history.push(`http://localhost:3000/atualizacaoCliente/${idCliente}`);
+
+    const handleAtualizarClick = () => {
+        // Use navigate para redirecionar para a rota do formulário de atualização
+        navigate(`/atualizacaoCliente`);
     }
-        
+
     return (
-            <div className="row center-align">
-                <div className="card">
-                    <div className="card-content">
-                        <span className="card-title">Deletar Cliente</span>
-                            <div className="input-field col s12">
-                                <option value="" disabled></option>
-                                <select
-                                    id="metodo"
-                                    className="browser-default"
-                                    onChange={handleMetodoChange}
-                                    value={state.metodoSelecionado}
-                                >
-                                    <option value=''></option>
-                                    <option value="1">Procurar por CPF</option>
-                                    <option value="2">Procurar por Nome</option>
-                                    <option value="3">Procurar por ID</option>
-                                </select>
-                                <label>Método de Busca</label>
-                            </div>{renderInputs()}
-                            <div className="input-field col s12">
-                                <button className="btn waves-effect waves-light" onClick={handleBuscarClick}>
-                                    Buscar
-                                    <i className="material-icons right">search</i>
-                                </button>
-                            </div>
-                            {((state.nome || state.id || state.cpf) && state.buscou) && (
-                            renderDetalhesCliente()
-                        )}
-                        </div>
+        <div className="row center-align">
+            <div className="card">
+                <div className="card-content">
+                    <span className="card-title">Buscar Cliente</span>
+                    <div className="input-field col s12">
+                        <option value="" disabled></option>
+                        <select
+                            id="metodo"
+                            className="browser-default"
+                            onChange={handleMetodoChange}
+                            value={state.metodoSelecionado}
+                        >
+                            <option value=''></option>
+                            <option value="1">Procurar por CPF</option>
+                            <option value="2">Procurar por Nome</option>
+                            <option value="3">Procurar por ID</option>
+                        </select>
+                        <label>Método de Busca</label>
+                    </div>{renderInputs()}
+                    <div className="input-field col s12">
+                        <button className="btn waves-effect waves-light" onClick={handleBuscarClick}>
+                            Buscar
+                            <i className="material-icons right">search</i>
+                        </button>
                     </div>
+                    {((state.nome || state.id || state.cpf) && state.buscou) && (
+                        renderDetalhesCliente()
+                    )}
                 </div>
-        );
+            </div>
+        </div>
+    );
 }

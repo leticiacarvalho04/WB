@@ -1,6 +1,7 @@
+// ServicosClientes.tsx
 import React, { Component } from "react";
 import 'materialize-css/dist/css/materialize.min.css';
-import './produto.css'
+import './produto.css';
 
 type Props = {
     id: string,
@@ -9,7 +10,7 @@ type Props = {
 
 interface State {
     activeTab: string;
-    id: string,
+    id: string;
     nome: string;
     tema: string;
     buscou: boolean;
@@ -24,17 +25,14 @@ const servicos = [
 ];
 
 function buscarServico(query: string) {
-    // verifica se a consulta é um ID
     if (servicos.some(servico => servico.id === query)) {
         return servicos.find(servico => servico.id === query);
     }
 
-    // se não for um ID, assume que é um nome
     return servicos.find(servico => servico.nome.toLowerCase() === query.toLowerCase());
 }
 
-
-export default class Servicos extends Component<Props, State> {
+export default class ServicosClientes extends Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -56,7 +54,7 @@ export default class Servicos extends Component<Props, State> {
 
     handleBuscarClick = () => {
         const { metodoSelecionado, id, nome } = this.state;
-    
+
         let servico;
         if (metodoSelecionado) {
             if (metodoSelecionado === '1' && id) {
@@ -67,7 +65,7 @@ export default class Servicos extends Component<Props, State> {
                 servico = buscarServico(nome);
             }
         }
-    
+
         if (servico) {
             this.setState({
                 id: servico.id,
@@ -76,11 +74,10 @@ export default class Servicos extends Component<Props, State> {
             });
         }
     }
-    
-    
+
     renderInputs() {
         const { metodoSelecionado } = this.state;
-    
+
         return (
             <>
                 {metodoSelecionado === '1' && (
@@ -105,10 +102,10 @@ export default class Servicos extends Component<Props, State> {
             </>
         );
     }
-    
+
     handleDeletarClick = () => {
         alert('Serviço deletado!');
-    }    
+    }
 
     handleTabClick = (tabName: string) => {
         this.setState({
@@ -123,7 +120,7 @@ export default class Servicos extends Component<Props, State> {
 
     render() {
         let estiloBotao = `btn waves-effect waves-light ${this.props.tema}`;
-        
+
         return (
             <div className="row center-align">
                 <div className="col s12">
@@ -136,10 +133,10 @@ export default class Servicos extends Component<Props, State> {
                         </li>
                     </ul>
                 </div>
-                <div id="deleteTab" className={`col s12 ${this.state.activeTab === 'delete' ? 'active' : ''}`}>                    {/* Conteúdo para deletar cliente */}
-                <div className="card">
-                    <div className="card-content">
-                        <span className="card-title">Deletar Serviço</span>
+                <div id="deleteTab" className={`col s12 ${this.state.activeTab === 'delete' ? 'active' : ''}`}>
+                    <div className="card">
+                        <div className="card-content">
+                            <span className="card-title">Deletar Serviço</span>
                             <div className="input-field col s12">
                                 <option value="" disabled></option>
                                 <select
@@ -161,20 +158,19 @@ export default class Servicos extends Component<Props, State> {
                                 </button>
                             </div>
                             {((this.state.nome || this.state.id) && this.state.buscou) && (
-                            <div>
-                                <p>Nome: {this.state.nome}</p>
-                                <p>ID: {this.state.id}</p>
-                                <button className="btn waves-effect waves-light" onClick={this.handleDeletarClick}>
-                                    Deletar
-                                    <i className="material-icons right">delete</i>
-                                </button>
-                            </div>
+                                <div>
+                                    <p>Nome: {this.state.nome}</p>
+                                    <p>ID: {this.state.id}</p>
+                                    <button className="btn waves-effect waves-light" onClick={this.handleDeletarClick}>
+                                        Deletar
+                                        <i className="material-icons right">delete</i>
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>
                 </div>
                 <div id="updateTab" className={`col s12 ${this.state.activeTab === 'update' ? 'active' : ''}`}>
-                    {/* Conteúdo para atualizar cadastro */}
                     <div className="card">
                         <div className="card-content">
                             <span className="card-title">Atualizar Cadastro</span>
@@ -191,13 +187,13 @@ export default class Servicos extends Component<Props, State> {
                                 <label htmlFor="preco">Preço</label>
                             </div>
                             <div className="row" >
-                            <div className="col s12">
-                                <button className={estiloBotao} type="submit" name="action">
-                                Submit
-                                <i className="material-icons right">send</i>
-                                </button>
+                                <div className="col s12">
+                                    <button className={estiloBotao} type="submit" name="action">
+                                        Submit
+                                        <i className="material-icons right">send</i>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
                         </div>
                         <div className="row" style={{ marginBottom: '20px' }}></div>
                     </div>

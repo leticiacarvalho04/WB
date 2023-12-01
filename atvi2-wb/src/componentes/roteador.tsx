@@ -37,7 +37,7 @@ export function AppRoutes() {
                     <Route path="/cadastrocliente" element={<FormularioCadastroCliente tema="purple darken-2" />} />
                     <Route path="/compraCliente" element={<Compra id={""} cpf={""} tema={""} />}/>
                     <Route path="/listagem" element={<Listagem id={""} tema={""} />}/>
-                    <Route path="/atualizacaoCliente/:idCliente" element={<FormularioAtualizacaoCliente />} />
+                    <Route path="/atualizacaoCliente" element={<FormularioAtualizacaoCliente />} />
                 </Routes>
             </div>
         </BrowserRouter>
