@@ -9,6 +9,8 @@ import FormularioCadastroCliente from './clientes/formularioCadastroCli';
 import FormularioCadastroProduto from './produtos_servicos/formCadastroProdServ';
 import Compra from './compra';
 import Listagem from './listagem';
+import FormularioAtualizacaoCliente from "./clientes/formularioAtualizar";
+import ClienteDetails from "./clientes/atualizarDeletarCli";
 
 function AppRoutes() {
   return (
@@ -18,6 +20,7 @@ function AppRoutes() {
           botoes={[
             { nome: 'Home', rota: '/' },
             { nome: 'Clientes', rota: '/clientes' },
+            { nome: 'Atualizar/Deletar Cliente', rota: '/atualizaDeletaCli'},
             { nome: 'Produtos', rota: '/produtos' },
             { nome: 'Serviços', rota: '/servicos' },
             { nome: 'Cadastro de Clientes', rota: '/cadastrocliente' },
@@ -31,12 +34,14 @@ function AppRoutes() {
           <Switch>
             <Route path="/" element={<Home tema="purple darken-2" />} />
             <Route path="/clientes" element={<Clientes />} />
+            <Route path="/atualizaDeletaCli" element={<ClienteDetails id={""} tema={""} cpf={""} />} />
             <Route path="/produtos" element={<ProdutoDetails tema="purple darken-2" id={""} />} />
             <Route path="/servicos" element={<Servicos id={""} tema={""} />} />
             <Route path="/cadastroprodserv" element={<FormularioCadastroProduto tema="purple darken-2" />} />
             <Route path="/cadastrocliente" element={<FormularioCadastroCliente tema="purple darken-2" />} />
             <Route path="/compraCliente" element={<Compra id={""} cpf={""} tema={""} />}/>
             <Route path="/listagem" element={<Listagem id={""} tema={""} />}/>
+            <Route path="/atualizacaoCliente" element={<FormularioAtualizacaoCliente />} />
           </Switch>
       </BrowserRouter>
     </>
