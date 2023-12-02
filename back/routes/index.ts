@@ -363,13 +363,13 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
     // Atualiza um produto pelo ID
     router.put('/produto/id/:id', async (req: Request, res: Response) => {
       const { id } = req.params;
-      const { nome, descricao, preco, quantidadeEstoque, empresaId } = req.body;
+      const { nome, descricao, preco, quantidadeEstoque } = req.body;
     
       try {
         const produto = await prisma.Produto.upsert({
           where: { id: Number(id) },
-          update: { nome: nome, descricao: descricao, preco: preco, quantidadeEstoque: quantidadeEstoque, empresaId: empresaId },
-          create: { nome: nome, descricao: descricao, preco: preco, quantidadeEstoque: quantidadeEstoque, empresaId: empresaId },
+          update: { nome: nome, descricao: descricao, preco: preco, quantidadeEstoque: quantidadeEstoque, empresaId: 1 },
+          create: { nome: nome, descricao: descricao, preco: preco, quantidadeEstoque: quantidadeEstoque, empresaId: 1 },
         });
     
         console.log(produto)
@@ -1220,8 +1220,7 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       try {
           const produto = await prisma.produto.findFirst({
               where: {
-                  id: Number(req.params.id),
-                  empresaId: 1, // Adicione isso
+                  id: Number(req.params.id)
               },
               select: {
                   id: true,

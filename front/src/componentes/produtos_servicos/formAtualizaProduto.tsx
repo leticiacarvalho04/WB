@@ -3,17 +3,15 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 interface Produto {
-  id: number;
   nome: string;
   descricao: string;
   preco: number;
   quantidadeEstoque: number;
 }
 
-export default function FormularioAtualizacaoProduto(props:any) {
+export default function FormularioAtualizacaoProduto() {
     const { id } = useParams<{ id: string }>();
     const [produto, setProduto] = useState<Produto>({
-    id: 0,
     nome: '',
     descricao: '',
     preco: 0,
@@ -48,7 +46,7 @@ export default function FormularioAtualizacaoProduto(props:any) {
 
   const handleAtualizarClick = async () => {
     try {
-        const response = await axios.put(`http://localhost:5001/produto/id/${id}`);
+        const response = await axios.put(`http://localhost:5001/produto/id/${id}`,produto);
         console.log(response.data);
         alert(`Produto atualizado!`)
       } catch (error) {
