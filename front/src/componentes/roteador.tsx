@@ -8,7 +8,7 @@ import Servicos from "./produtos_servicos/atualizarDeletarServico";
 import Compra from "./compra";
 import Home from "./home";
 import Clientes from "./clientes/clientes";
-import { Listagem } from "./listagem";
+import Listagem from "./listagem";
 
 export function AppRoutes() {
     return (

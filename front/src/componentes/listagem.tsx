@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import './listagem.css';
+//import './listagem.css';
+import 'materialize-css/dist/css/materialize.min.css';
 
 interface Cliente {
     nome: string;
@@ -27,12 +28,11 @@ interface Servico {
 }
 
 interface QntServico{
-    servicoNome: string;
+    nomeServico: string;
     count: number;
 }
 
-export function Listagem() {
-    const [activeTab, setActiveTab] = useState("produto");
+export default function Listagem() {
     const [top10Clientes, setTop10Clientes] = useState<Cliente[]>([]);
     const [low10Clientes, setLow10Clientes] = useState<Cliente[]>([]);
     const [produtos, setProdutos] = useState<Produto[]>([]);
@@ -41,6 +41,19 @@ export function Listagem() {
     const [produtosGeneroMasculino, setProdutosGeneroMasculino] = useState<QntProduto[]>([]);
     const [servicosGeneroFeminino, setServicosGeneroFeminino] = useState<QntServico[]>([]);
     const [servicosGeneroMasculino, setServicosGeneroMasculino] = useState<QntServico[]>([]);
+
+    useEffect(() => {
+        let tabs = document.querySelectorAll('.tabs');
+        let instance = M.Tabs.init(tabs, {});
+        fetchClientesMaisConsumidores();
+        clientesMenosConsumidores();
+        fetchProdutos();
+        fetchServicos();
+        produtosGeneroFemininoRequest();
+        produtosGeneroMasculinoRequest();
+        servicosGeneroFemininoRequest();
+        servicosGeneroMasculinoRequest();
+    }, []);
 
     const fetchClientesMaisConsumidores = () => {
         axios.get("http://localhost:5001/clientes/maisConsumidores")
@@ -52,9 +65,7 @@ export function Listagem() {
             });
     };
 
-    const handleTabClick = (tabName: string) => {
-        setActiveTab(tabName);
-    };
+    
 
     const clientesMenosConsumidores = () => {
         axios.get('http://localhost:5001/clientes/menosConsumidores')
@@ -141,35 +152,22 @@ export function Listagem() {
             });
     }
 
-    useEffect(() => {
-        let tabs = document.querySelectorAll('.tabs');
-        let instance = M.Tabs.init(tabs, {});
-        fetchClientesMaisConsumidores();
-        clientesMenosConsumidores();
-        fetchProdutos();
-        fetchServicos();
-        produtosGeneroFemininoRequest();
-        produtosGeneroMasculinoRequest();
-        servicosGeneroFemininoRequest();
-        servicosGeneroMasculinoRequest();
-    }, []);
-
     return (
         <div className="row center-align">
             <div className="col s12">
                 <ul className="tabs">
-                    <li className="tab col s4" onClick={() => handleTabClick('produto')}>
-                        <a className={activeTab === 'produto' ? 'active' : ''} href="#produtoTab">Listagem Produto</a>
+                    <li className="tab col s4">
+                    <a href="#produtoTab">Listagem Produto</a>
                     </li>
-                    <li className="tab col s4" onClick={() => handleTabClick('servico')}>
-                        <a className={activeTab === 'servico' ? 'active' : ''} href="#servicoTab">Listagem Serviço</a>
+                    <li className="tab col s4">
+                    <a href="#servicoTab">Listagem Serviço</a>
                     </li>
-                    <li className="tab col s4" onClick={() => handleTabClick('cliente')}>
-                        <a className={activeTab === 'cliente' ? 'active' : ''} href="#clienteTab">Listagens Relacionadas aos Clientes</a>
+                    <li className="tab col s4">
+                    <a href="#clienteTab">Listagens Relacionadas aos Clientes</a>
                     </li>
                 </ul>
             </div>
-            <div id="produtoTab" className={`col s12 ${activeTab === 'produto' ? 'active' : ''}`}>
+            <div id="produtoTab" className="col s12">
                 <div className="card">
                     <div className="card-content">
                         <span className="card-title">Listar Produto</span>
@@ -208,17 +206,18 @@ export function Listagem() {
                     </div>
                 </div>
             </div>
-            <div id="servicoTab" className={`col s12 ${activeTab === 'servico' ? 'active' : ''}`}>
+            <div id="servicoTab" className="col s12">
                 <div className="card">
                     <div className="card-content">
                         <span className="card-title">Listar serviços</span>
                         <div>
-                            {servicos.map((servico, index) => (
+                        {servicos && servicos.map((servico, index) => (
                                 <div key={index}>
                                     <p>{servico.name} - Preço: {servico.price}</p>
                                     <br />
                                 </div>
-                            ))}
+                            ))
+                        }
                         </div>
                     </div>
                 </div>
@@ -227,26 +226,28 @@ export function Listagem() {
                         <span className="card-title">Serviços mais consumidos por gênero</span>
                         <div>
                             <p><strong>Gênero Feminino</strong></p>
-                            {servicosGeneroFeminino.map((servico, index) => (
-                                <div key={index}>
-                                    <p>{index + 1} - {servico.servicoNome}: {servico.count}</p>
-                                    <br />
-                                </div>
-                            ))}
+                            {servicosGeneroFeminino && servicosGeneroFeminino.map((servico, index) => (
+                                    <div key={index}>
+                                        <p>{index + 1} - {servico.nomeServico}: {servico.count}</p>
+                                        <br />
+                                    </div>
+                                ))
+                            }
                         </div>
                         <div>
                             <p><strong>Gênero Masculino</strong></p>
-                            {servicosGeneroMasculino.map((servico, index) => (
-                                <div key={index}>
-                                    <p>{index + 1} - {servico.servicoNome}: {servico.count}</p>
-                                    <br />
-                                </div>
-                            ))}
+                            {servicosGeneroMasculino && servicosGeneroMasculino.map((servico, index) => (
+                                    <div key={index}>
+                                        <p>{index + 1} - {servico.nomeServico}: {servico.count}</p>
+                                        <br />
+                                    </div>
+                                ))
+                            }
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="clienteTab" className={`col s12 ${activeTab === 'cliente' ? 'active' : ''}`}>
+            <div id="clienteTab" className="col s12">
                 <div className="card">
                     <div className="card-content">
                         <span className="card-title">Top 10 clientes que mais consumiram</span>

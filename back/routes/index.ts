@@ -912,27 +912,68 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
     // listar TODOS os clientes
     router.get('/clientes', async (req: Request, res: Response) => {
       try {
-        const clientes = await prisma.cliente.findMany();
+        const clientes = await prisma.cliente.findMany({
+          select:{
+            nome: true,
+            genero: true,
+            cpf: {
+              select: {
+                valor: true
+              }
+            },
+            rgs: {
+              select: {
+                valor: true
+              }
+            },
+            telefone: {
+              select: {
+                ddd: true,
+                numero: true
+              }
+            }
+          }
+        });
         res.json(clientes);
       } catch (error) {
         res.status(500).json(error);
       }
-    });
+    });       
 
     // listar os clientes por GÊNERO
-    router.get('/clientes/genero/:genero', async (req: Request,res: Response) => {
-        try {
-          const clientes = await prisma.cliente.findMany({
-            where: {
-              genero: req.params.genero
+    router.get('/clientes/genero/:genero', async (req: Request, res: Response) => {
+      try {
+        const clientes = await prisma.cliente.findMany({
+          where: {
+            genero: req.params.genero
+          },
+          select:{
+            nome: true,
+            genero: true,
+            cpf: {
+              select: {
+                valor: true
+              }
+            },
+            rgs: {
+              select: {
+                valor: true
+              }
+            },
+            telefone: {
+              select: {
+                ddd: true,
+                numero: true
+              }
             }
-          });
-          console.log(clientes);
-          res.json(clientes);
-          } catch (error) {
-            res.status(500).json(error);
-        }
-      });
+          }
+        });
+        console.log(clientes);
+        res.json(clientes);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    });    
 
     // Listagem dos 10 clientes que mais consumiram produtos ou serviços
     router.get('/clientes/maisConsumidores', async (req: Request, res: Response) => {
