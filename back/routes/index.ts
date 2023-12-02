@@ -549,6 +549,66 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
         res.status(500).json(error);
       }
     });
+
+    // Deletar PRODUTO por id
+    router.delete('/produto/id/:id', async (req: Request, res: Response) => {
+      const { id } = req.params;
+    
+      try {
+        const produto = await prisma.produto.findUnique({
+          where: { id: parseInt(id) },
+        });
+    
+        if (!produto) {
+          return res.status(404).json({ error: 'Serviço não encontrado' });
+        }
+    
+        // Primeiro, exclua todos os produtosConsumidos associados a este serviço
+        await prisma.produtosConsumidos.deleteMany({
+          where: { produtoId: produto.id },
+        });
+    
+        // Agora você pode excluir o serviço
+        await prisma.produto.delete({
+          where: { id: produto.id },
+        });
+    
+        res.json({ message: 'Produto deletado com sucesso' });
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });
+    
+    // deletar PRODUTO pelo nome
+    router.delete('/produto/nome/:name', async (req: Request, res: Response) => {
+      const { name } = req.params;
+    
+      try {
+        const produto = await prisma.produto.findUnique({
+          where: { name: name },
+        });
+    
+        if (!produto) {
+          return res.status(404).json({ error: 'Serviço não encontrado' });
+        }
+    
+        // Primeiro, exclua todos os produtoConsumidos associados a este serviço
+        await prisma.produtoConsumidos.deleteMany({
+          where: { produtoId: produto.id },
+        });
+    
+        // Agora você pode excluir o serviço
+        await prisma.produto.delete({
+          where: { id: produto.id },
+        });
+    
+        res.json({ message: 'Produto deletado com sucesso' });
+      } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+      }
+    });
     
     // Rota para buscar um PRODUTO pelo id
     router.get('/produtos/id/:id', async (req: Request, res: Response) => {
@@ -1163,8 +1223,6 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
               select: {
                   id: true,
                   nome: true,
-                  preco: true,
-                  quantidadeEstoque: true
               }
           });
   

@@ -1,5 +1,5 @@
-import { Component } from "react";
-import 'materialize-css/dist/css/materialize.min.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
     id: string,
@@ -18,9 +18,9 @@ interface State {
 }
 
 const clientes = [
-    { id: '1', nome: 'João da Silva', cpf:'12345678900' },
-    { id: '2', nome: 'Maria Oliveira', cpf:'98765432100' },
-    { id: '3', nome: 'Lucas Oliveira', cpf:'55555555500' },
+    { id: '1', nome: 'João da Silva', cpf: '12345678900' },
+    { id: '2', nome: 'Maria Oliveira', cpf: '98765432100' },
+    { id: '3', nome: 'Lucas Oliveira', cpf: '55555555500' },
     // adicione mais produtos conforme necessário
 ];
 
@@ -41,30 +41,28 @@ function buscarCliente(query: string) {
     // retorna null se o cliente não for encontrado
     return null;
 }
-export default class ClienteDetails extends Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            activeTab: 'delete',
-            id: props.id,
-            nome: '',
-            tema: props.tema,
-            cpf: props.cpf,
-            metodoSelecionado: '',
-            buscou: false
-        };
-    }
+export default function ClienteDetails(props: any) {
+    const [state, setState] = useState({
+        id: props.id,
+        nome: '',
+        cpf: props.cpf,
+        metodoSelecionado: '',
+        buscou: false,
+    });
 
-    handleMetodoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({
-            metodoSelecionado: event.target.value
+    const navigate = useNavigate();
+
+    const handleMetodoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setState({
+            ...state,
+            metodoSelecionado: event.target.value,
         });
-    }
+    };
 
-    handleBuscarClick = () => {
-        const { metodoSelecionado, cpf, nome, id } = this.state;
-    
+    const handleBuscarClick = () => {
+        const { metodoSelecionado, cpf, nome, id } = state;
+
         let cliente;
         if (metodoSelecionado) {
             if (metodoSelecionado === '1' && cpf) {
@@ -76,40 +74,59 @@ export default class ClienteDetails extends Component<Props, State> {
             } else if (metodoSelecionado === '3' && id) {
                 console.log(`Busca por ID: ${id}`);
                 cliente = buscarCliente(id)
-            } 
-            
+            }
+
         }
-        
-        if (cliente){
-            this.setState({
+
+        if (cliente) {
+            setState({
                 id: cliente.id,
                 nome: cliente.nome,
                 cpf: cliente.cpf,
+                metodoSelecionado: '',
                 buscou: true
             })
         }
     }
-    
-    renderInputs() {
-        const { metodoSelecionado } = this.state;
-    
+
+    const renderInputs = () => {
+        const { metodoSelecionado } = state;
+
         return (
             <>
                 {metodoSelecionado === '1' && (
                     <div className="input-field col s12">
-                        <input id="cpf" type="text" className="validate" value={this.state.cpf} onChange={(e) => this.setState({ cpf: e.target.value })} />
+                        <input
+                            id="cpf"
+                            type="text"
+                            className="validate"
+                            value={state.cpf}
+                            onChange={(e) => setState(prevState => ({ ...prevState, cpf: e.target.value }))}
+                        />
                         <label htmlFor="cpf">CPF</label>
                     </div>
                 )}
                 {metodoSelecionado === '2' && (
                     <div className="input-field col s12">
-                        <input id="nome" type="text" className="validate" value={this.state.nome} onChange={(e) => this.setState({ nome: e.target.value })} />
+                        <input
+                            id="nome"
+                            type="text"
+                            className="validate"
+                            value={state.nome}
+                            onChange={(e) => setState(prevState => ({ ...prevState, nome: e.target.value }))}
+                        />
                         <label htmlFor="nome">Nome</label>
                     </div>
                 )}
                 {metodoSelecionado === '3' && (
                     <div className="input-field col s12">
-                        <input id="id" type="text" className="validate" value={this.state.id} onChange={(e) => this.setState({ id: e.target.value })} />
+                        <input
+                            id="id"
+                            type="text"
+                            className="validate"
+                            value={state.id}
+                            onChange={(e) => setState(prevState => ({ ...prevState, id: e.target.value }))}
+                        />
                         <label htmlFor="id">ID</label>
                     </div>
                 )}
@@ -123,136 +140,74 @@ export default class ClienteDetails extends Component<Props, State> {
             </>
         );
     }
-    
-    handleDeletarClick = () => {
+
+    const handleDeletarClick = () => {
         alert('Cliente deletado!');
-    }    
-
-    handleTabClick = (tabName: string) => {
-        this.setState({
-            activeTab: tabName
-        });
     }
 
-    componentDidMount() {
-        const tabs = document.querySelectorAll('.tabs');
-        M.Tabs.init(tabs);
+    const componentDidMount = () => {
+        handleBuscarClick();
     }
 
-    render() {
-        let estilo = `collection-item active ${this.props.tema}`;
-        let estiloBotao = `btn waves-effect waves-light ${this.props.tema}`;
-        
+    const renderDetalhesCliente = () => {
+        const { nome, cpf, id } = state;
+
         return (
-            <div className="row center-align">
-                <div className="col s12">
-                    <ul className="tabs">
-                        <li className="tab col s6" onClick={() => this.handleTabClick('delete')}>
-                            <a className={this.state.activeTab === 'delete' ? 'active' : ''} href="#deleteTab">Deletar Cliente</a>
-                        </li>
-                        <li className="tab col s6" onClick={() => this.handleTabClick('update')}>
-                            <a className={this.state.activeTab === 'update' ? 'active' : ''} href="#updateTab">Atualizar Cadastro</a>
-                        </li>
-                    </ul>
-                </div>
-                <div id="deleteTab" className={`col s12 ${this.state.activeTab === 'delete' ? 'active' : ''}`}>                    {/* Conteúdo para deletar cliente */}
-                <div className="card">
-                    <div className="card-content">
-                        <span className="card-title">Deletar Cliente</span>
-                            <div className="input-field col s12">
-                                <option value="" disabled></option>
-                                <select
-                                    id="metodo"
-                                    className="browser-default"
-                                    onChange={this.handleMetodoChange}
-                                    value={this.state.metodoSelecionado}
-                                >
-                                    <option value=''></option>
-                                    <option value="1">Procurar por CPF</option>
-                                    <option value="2">Procurar por Nome</option>
-                                    <option value="3">Procurar por ID</option>
-                                </select>
-                                <label>Método de Busca</label>
-                            </div>{this.renderInputs()}
-                            <div className="input-field col s12">
-                                <button className="btn waves-effect waves-light" onClick={this.handleBuscarClick}>
-                                    Buscar
-                                    <i className="material-icons right">search</i>
-                                </button>
-                            </div>
-                            {((this.state.nome || this.state.id || this.state.cpf) && this.state.buscou) && (
-                                <div>
-                                    <p>Nome: {this.state.nome}</p>
-                                    <p>ID: {this.state.id}</p>
-                                    <p>CPF: {this.state.cpf}</p>
-                                    <button className="btn waves-effect waves-light" onClick={this.handleDeletarClick}>
-                                        Deletar
-                                        <i className="material-icons right">delete</i>
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-                <div id="updateTab" className={`col s12 ${this.state.activeTab === 'update' ? 'active' : ''}`}>
-                    {/* Conteúdo para atualizar cadastro */}
-                    <div className="card">
-                        <div className="card-content">
-                            <span className="card-title">Atualizar Cadastro</span>
-                            <div className="input-field col s12">
-                                <input id="nome" type="text" className="validate" />
-                                <label htmlFor="nome">Nome</label>
-                            </div>
-                            <div className="input-field col s12">
-                                <input id="nome_social" type="text" className="validate" />
-                                <label htmlFor="nome_social">Nome social</label>
-                            </div>
-                            <div className="input-field col s12">
-                            <option value="" disabled>Gênero</option>
-                                <select id="genero" className="browser-default">
-                                <option value="" disabled>Escolha o gênero</option>
-                                <option value="1">Masculino</option>
-                                <option value="2">Feminino</option>
-                                <option value="3">Outro</option>
-                                </select>
-                            </div>
-                            <div className="input-field col s12">
-                                <input id="cpf" type="text" className="validate" />
-                                <label htmlFor="cpf">N° CPF</label>
-                            </div>
-                            <div className="input-field col s12">
-                                <input id="data_emissao_cpf" type="text" className="validate" />
-                                <label htmlFor="data_emissao_cpf">Data de emissão do CPF</label>
-                            </div>
-                            <div className="input-field col s12">
-                                <input id="quantidade_rg" type="text" className="validate" />
-                                <label htmlFor="quantidade_rg">Quantidade de RG</label>
-                            </div>
-                            <div className="input-field col s12">
-                                <input id="rg" type="text" className="validate" />
-                                <label htmlFor="rg">N° de RG</label>
-                            </div>
-                            <div className="input-field col s12">
-                                <input id="data_emissao_rg" type="text" className="validate" />
-                                <label htmlFor="data_emissao_rg">Data de emissão do RG</label>
-                            </div>
-                            <div className="input-field col s12">
-                                <input id="telefone" type="text" className="validate" />
-                                <label htmlFor="telefone">Telefone</label>
-                            </div>
-                        </div>
-                        <div className="row" >
-                            <div className="col s12">
-                                <button className={estiloBotao} type="submit" name="action">
-                                Submit
-                                <i className="material-icons right">send</i>
-                                </button>
-                            </div>
-                        </div>
-                        <div className="row" style={{ marginBottom: '20px' }}></div>
-                    </div>
+            <div className="card">
+                <div className="card-content">
+                    <span className="card-title">Detalhes do Cliente</span>
+                    <p>Nome: {nome}</p>
+                    <p>ID: {id}</p>
+                    <p>CPF: {cpf}</p>
+                    <button className="btn waves-effect waves-light" onClick={handleDeletarClick}>
+                        Deletar
+                        <i className="material-icons right">delete</i>
+                    </button>
+                    <button className="btn waves-effect waves-light" onClick={handleAtualizarClick}>
+                        Atualizar
+                        <i className="material-icons right">edit</i>
+                    </button>
                 </div>
             </div>
         );
     }
+
+    const handleAtualizarClick = () => {
+        // Use navigate para redirecionar para a rota do formulário de atualização
+        navigate(`/atualizacaoCliente`);
+    }
+
+    return (
+        <div className="row center-align">
+            <div className="card">
+                <div className="card-content">
+                    <span className="card-title">Buscar Cliente</span>
+                    <div className="input-field col s12">
+                        <option value="" disabled></option>
+                        <select
+                            id="metodo"
+                            className="browser-default"
+                            onChange={handleMetodoChange}
+                            value={state.metodoSelecionado}
+                        >
+                            <option value=''></option>
+                            <option value="1">Procurar por CPF</option>
+                            <option value="2">Procurar por Nome</option>
+                            <option value="3">Procurar por ID</option>
+                        </select>
+                        <label>Método de Busca</label>
+                    </div>{renderInputs()}
+                    <div className="input-field col s12">
+                        <button className="btn waves-effect waves-light" onClick={handleBuscarClick}>
+                            Buscar
+                            <i className="material-icons right">search</i>
+                        </button>
+                    </div>
+                    {((state.nome || state.id || state.cpf) && state.buscou) && (
+                        renderDetalhesCliente()
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 }
