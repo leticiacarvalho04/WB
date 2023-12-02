@@ -1216,6 +1216,33 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       }
     });
 
+    router.get('/produto/id/:id', async (req: Request, res: Response) => {
+      try {
+          const produto = await prisma.produto.findFirst({
+              where: {
+                  id: Number(req.params.id),
+                  empresaId: 1, // Adicione isso
+              },
+              select: {
+                  id: true,
+                  nome: true,
+                  descricao: true,
+                  preco: true,
+                  quantidadeEstoque: true,
+              }
+          });
+  
+          if (!produto) {
+              throw new Error(`Não foi possível encontrar o produto com o id ${req.params.id}`);
+          }
+  
+          res.json(produto);
+      } catch (err) {
+          res.status(400).json(err);
+      }
+  });
+  
+
     // listar todos os PRODUTOS
     router.get('/produto', async (req: Request, res: Response) => {
       try {

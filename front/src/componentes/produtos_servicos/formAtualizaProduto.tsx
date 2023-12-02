@@ -10,7 +10,7 @@ interface Produto {
   quantidadeEstoque: number;
 }
 
-export default function FormularioAtualizacaoProduto() {
+export default function FormularioAtualizacaoProduto(props:any) {
     const { id } = useParams<{ id: string }>();
     const [produto, setProduto] = useState<Produto>({
     id: 0,
@@ -33,7 +33,7 @@ export default function FormularioAtualizacaoProduto() {
   useEffect(() => {
     const carregarDetalhesProduto = async () => {
       try {
-        const response = await axios.put(`http://localhost:5001/produto/${id}`, produto);
+        const response = await axios.get(`http://localhost:5001/produto/id/${id}`);
         const produtoCarregado: Produto = response.data;
 
         // Atualiza o estado do produto com os detalhes carregados
@@ -48,11 +48,12 @@ export default function FormularioAtualizacaoProduto() {
 
   const handleAtualizarClick = async () => {
     try {
-      await axios.put(`http://localhost:5001/produto/id/${id}`, produto);
-      alert('Produto atualizado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao atualizar produto:', error);
-    }
+        const response = await axios.put(`http://localhost:5001/produto/id/${id}`);
+        console.log(response.data);
+        alert(`Produto atualizado!`)
+      } catch (error) {
+        console.error(error);
+      }
   };
 
   return (

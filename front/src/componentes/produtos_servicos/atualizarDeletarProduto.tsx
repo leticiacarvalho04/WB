@@ -214,7 +214,7 @@ export default function ProdutoDetails() {
                             </button>
                             {mostrarBotaoAtualizar && (
                             <div>
-                                <button className="btn waves-effect waves-light" onClick={() => navigate(`/atualizacaoProduto`)}>
+                                <button className="btn waves-effect waves-light" onClick={() => navigate(`/atualizacaoProduto/id/${id}`)}>
                                     Atualizar
                                     <i className="material-icons right">update</i>
                                     </button>

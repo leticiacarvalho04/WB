@@ -39,7 +39,7 @@ export function AppRoutes() {
                     <Route path="/compraCliente" element={<Compra id={""} cpf={""} tema={""} />}/>
                     <Route path="/listagem" element={<Listagem />}/>
                     <Route path="/atualizacaoCliente" element={<FormularioAtualizacaoCliente />} />
-                    <Route path="/atualizacaoProduto" element={<FormularioAtualizacaoProduto />} />
+                    <Route path="/atualizacaoProduto/id/:id" element={<FormularioAtualizacaoProduto />} />
                 </Routes>
             </div>
         </BrowserRouter>
