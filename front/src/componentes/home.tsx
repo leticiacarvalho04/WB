@@ -3,18 +3,60 @@ import 'materialize-css/dist/css/materialize.min.css';
 import './home.css';
 import axios from "axios";
 
+interface ProdutosMaisConsumidos{
+    nomeProduto: string,
+    count: number
+}
+
+interface ServicosMaisConsumidos{
+    nomeServico: string,
+    count: number
+}
+
+interface QntServico{
+    servicoNome: string;
+    count: number;
+}
+
+interface QntProduto{
+    id: number;
+    produtoNome: string;
+    count: number;
+}
+
+interface ClienteMaisConsumidor {
+    nome: string;
+    produtosConsumidos: number;
+    servicosConsumidos: number;
+}
+
+interface ClienteMaisGastou {
+    nome: string;
+    totalGasto: number;
+}
+
 export default function Home() {
     const [top10Clientes, setTop10Clientes] = useState<ClienteMaisConsumidor[]>([]);
+    const [ produtosMaisConsumidos, setProdutosMaisConsumidos] = useState<ProdutosMaisConsumidos[]>([])
+    const [ servicosMaisConsumidos, setservicosMaisConsumidos] = useState<ServicosMaisConsumidos[]>([])
+    const [produtosGeneroFeminino, setProdutosGeneroFeminino] = useState<QntProduto[]>([]);
+    const [produtosGeneroMasculino, setProdutosGeneroMasculino] = useState<QntProduto[]>([]);
+    const [servicosGeneroFeminino, setServicosGeneroFeminino] = useState<QntServico[]>([]);
+    const [servicosGeneroMasculino, setServicosGeneroMasculino] = useState<QntServico[]>([]);
+    const [ clienteGastos, setclienteGastos ] = useState<ClienteMaisGastou[]>([])
 
     useEffect(() => {
+        let tabs = document.querySelectorAll('.tabs');
+        let instance = M.Tabs.init(tabs, {});
         fetchClientesMaisConsumidores();
+        fetchProdutosMaisConsumidos();
+        fetchServicosMaisConsumidos();
+        produtosGeneroFemininoRequest();
+        produtosGeneroMasculinoRequest();
+        servicosGeneroFemininoRequest();
+        servicosGeneroMasculinoRequest();
+        ClientesMaisConsumidoresValor();
     }, []);
-
-    interface ClienteMaisConsumidor {
-        nome: string;
-        produtosConsumidos: number;
-        servicosConsumidos: number;
-    }
 
     const fetchClientesMaisConsumidores = () => {
         axios.get('http://localhost:5001/clientes/maisConsumidores')
@@ -24,6 +66,105 @@ export default function Home() {
             })
             .catch(error => {
                 console.error('Erro ao buscar os dados:', error);
+            });
+    }
+
+    const ClientesMaisConsumidoresValor = ()=>{
+        axios.get('http://localhost:5001/clientes/maisConsumidoresValor')
+        .then(response => {
+            console.log(response.data); // Verifique os dados recebidos no console
+            setclienteGastos(response.data);
+        })
+        .catch(error => {
+            console.error('Erro ao buscar os dados:', error);
+        });
+    }
+
+    const fetchProdutosMaisConsumidos = ()=>{
+        axios.get('http://localhost:5001/produtos/maisConsumidos')
+        .then(response => {
+            const produtosConsumidos: ProdutosMaisConsumidos[] = response.data.map((item: any) => ({
+                nomeProduto: item.nomeProduto,
+                count: item.count
+            }));
+            setProdutosMaisConsumidos(produtosConsumidos);
+            console.log(produtosConsumidos);
+        })
+        .catch(error => {
+            console.error('Erro ao buscar os dados:', error)
+        });
+    }
+
+    const fetchServicosMaisConsumidos = ()=>{
+        axios.get('http://localhost:5001/servicos/maisConsumidos')
+        .then(response => {
+            const servicosConsumidos: ServicosMaisConsumidos[] = response.data.map((item: any) => ({
+                nomeServico: item.nomeServico,
+                count: item.count
+            }));
+            setservicosMaisConsumidos(servicosConsumidos);
+            console.log(servicosConsumidos);
+        })
+        .catch(error => {
+            console.error('Erro ao buscar os dados:', error)
+        });
+    }
+
+    const produtosGeneroFemininoRequest = () => {
+        axios.get('http://localhost:5001/produtos/maisConsumidosPorGenero/Feminino')
+            .then((response) => {
+                const produtosConsumidos: QntProduto[] = response.data.map((item: any) => ({
+                    produtoNome: item.produtoNome,
+                    count: item.count
+                }));
+                setProdutosGeneroFeminino(produtosConsumidos);
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
+            });
+    }
+
+    const produtosGeneroMasculinoRequest = () => {
+        axios.get('http://localhost:5001/produtos/maisConsumidosPorGenero/Masculino')
+            .then((response) => {
+                const produtosConsumidos: QntProduto[] = response.data.map((item: any) => ({
+                    produtoNome: item.produtoNome,
+                    count: item.count
+                }));
+                setProdutosGeneroMasculino(produtosConsumidos);
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
+            });
+    }
+
+    const servicosGeneroFemininoRequest = () => {
+        axios.get('http://localhost:5001/servicos/maisConsumidosPorGenero/Feminino')
+            .then((response) => {
+                console.log('Dados de serviços por gênero feminino:', response.data); // Adição para verificar os dados recebidos
+                const servicosConsumidos: QntServico[] = response.data.map((item: any) => ({
+                    servicoNome: item.servicoNome,
+                    count: item.count
+                }));
+                setServicosGeneroFeminino(servicosConsumidos);
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
+            });
+    }
+
+    const servicosGeneroMasculinoRequest = () => {
+        axios.get('http://localhost:5001/servicos/maisConsumidosPorGenero/Masculino')
+            .then((response) => {
+                console.log('Dados de serviços por gênero masculino:', response.data); // Adição para verificar os dados recebidos
+                const servicosConsumidos: QntServico[] = response.data.map((item: any) => ({
+                    servicoNome: item.servicoNome,
+                    count: item.count
+                }));
+                setServicosGeneroMasculino(servicosConsumidos);
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar os dados:", error);
             });
     }
 
@@ -46,20 +187,20 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
-                <div className="">
-                    <div className="card">
-                        <div className="card-content">
-                            <span className="card-title">Clientes que Mais Gastaram</span>
-                            <ul className="collection">
-                                <li className="collection-item">Enzo Oliveira: R$ 105.00</li>
-                                <li className="collection-item">Luiz Oliveira: R$ 100.00</li>
-                                <li className="collection-item">Maria Oliveira: R$ 90.00</li>
-                                <li className="collection-item">Luciana Oliveira: R$ 83.00</li>
-                                <li className="collection-item">Audrey Duarte: R$ 78.00</li>
-                            </ul>
+                    <div className="tres">
+                        <div className="card">
+                            <div className="card-content">
+                                <span className="card-title">Clientes que Mais Gastaram</span>
+                                <ul className="collection">
+                                    {clienteGastos.slice(0, 5).map((cliente, index) => (
+                                        <li key={index} className="collection-item">
+                                            {cliente.nome}: R$ {cliente.totalGasto}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
             <div className="row center-align">
                     <div className="">
@@ -74,19 +215,21 @@ export default function Home() {
                                     <div className="row">
                                         <div id="produtos" className="col s12">
                                             <ul className="collection">
-                                                <li className="collection-item">Perfume Feminino: 2 unidades</li>
-                                                <li className="collection-item">Batom Matte: 3 unidades</li>
-                                                <li className="collection-item">Sombra em Pó: 3 unidades</li>
-                                                <li className="collection-item">Esmalte Duradouro: 2 unidades</li>
+                                                {produtosMaisConsumidos.slice(0, 4).map((produto, index) => (
+                                                    <li key={index} className="collection-item">
+                                                        {produto.nomeProduto}: {produto.count} unidades
+                                                    </li>
+                                                ))}
                                             </ul>
                                             <p><a href="/listagem#produtoTab">Visualizar a lista completa</a></p>
                                         </div>
                                         <div id="servicos" className="col s12">
                                             <ul className="collection">
-                                                <li className="collection-item">Corte de Cabelo: R$ 40,00</li>
-                                                <li className="collection-item">Manicure: R$ 70,00</li>
-                                                <li className="collection-item">Pedicure: R$ 90,00</li>
-                                                <li className="collection-item">Limpeza de Pele: R$ 120,00</li>
+                                                {servicosMaisConsumidos.slice(0, 4).map((servico, index) => (
+                                                    <li key={index} className="collection-item">
+                                                        {servico.nomeServico}: {servico.count} unidades
+                                                    </li>
+                                                ))}
                                             </ul>
                                             <p><a href="/listagem#servicoTab">Visualizar a lista completa</a></p>
                                         </div>
@@ -111,21 +254,22 @@ export default function Home() {
                                         {/* Tab Feminino */}
                                         <div id="feminino">
                                             <ul className="collection">
-                                                <li className="collection-item">Perfume Feminino: 1 unidade</li>
-                                                <li className="collection-item">Batom Matte: 3 unidades</li>
-                                                <li className="collection-item">Sombra em Pó: 3 unidades</li>
-                                                <li className="collection-item">Esmalte Duradouro: 1 unidade</li>
-                                                
+                                                {produtosGeneroFeminino.slice(0, 4).map((produto, index) => (
+                                                    <li key={index} className="collection-item">
+                                                        {produto.produtoNome}: {produto.count} unidades
+                                                    </li>
+                                                ))}
                                             </ul>
                                             <p><a href="/listagem#produtoTab">Visualizar a lista completa</a></p>
                                         </div>
                                         {/* Tab Masculino */}
                                         <div id="masculino">
                                             <ul className="collection">
-                                                <li className="collection-item">Perfume Masculino: 2 unidades</li>
-                                                <li className="collection-item">Creme Anti-Idade: 1 unidade</li>
-                                                <li className="collection-item">Esmalte Duradouro: 1 unidade</li>
-                                                <li className="collection-item">Perfume Unissex: 1 unidade</li>
+                                                {produtosGeneroMasculino.slice(0, 4).map((produto, index) => (
+                                                    <li key={index} className="collection-item">
+                                                        {produto.produtoNome}: {produto.count} unidades
+                                                    </li>
+                                                ))}
                                             </ul>
                                             <p><a href="/listagem#produtoTab">Visualizar a lista completa</a></p>
                                         </div>

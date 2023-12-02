@@ -870,6 +870,7 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
             }
           });
           return {
+            id: produto.id,
             produtoNome: produto.nome,
             count
           };
@@ -1063,19 +1064,21 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
     });    
 
     //Listagem dos 5 que mais consumiram em valor
-    router.get('/clientes/maioresConsumidoresValor', async (req: Request, res: Response) => {
+    router.get('/clientes/maisConsumidoresValor', async (req: Request, res: Response) => {
       try {
-        // Obtaining the list of all clients
         const clientes = await prisma.cliente.findMany();
     
-        // Calculating the total value consumed by each client
-        const totalValorConsumidoPorCliente = await Promise.all(clientes.map(async (cliente:{id:number, valor:any}) => {
+        const totalGastoPorCliente = await Promise.all(clientes.map(async (cliente: { id: number, nome: string }) => {
           const produtosConsumidos = await prisma.produtosConsumidos.findMany({
             where: {
               clienteId: cliente.id
             },
             select: {
-              valor: true
+              produto: {
+                select: {
+                  preco: true
+                }
+              }
             }
           });
     
@@ -1084,66 +1087,65 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
               clienteId: cliente.id
             },
             select: {
-              valor: true
+              servico: {
+                select: {
+                  price: true
+                }
+              }
             }
           });
     
-          const valorTotalProdutos = produtosConsumidos.reduce((total: any, produto: any) => total + produto.valor, 0);
-          const valorTotalServicos = servicosConsumidos.reduce((total: any, servico: any) => total + servico.valor, 0);
+          const totalGastoEmProdutos = produtosConsumidos.reduce((total:any, produto:any) => total + produto.produto.preco, 0);
+          const totalGastoEmServicos = servicosConsumidos.reduce((total:any, servico:any) => total + servico.servico.price, 0);
     
           return {
-            clienteId: cliente.id,
-            totalValorConsumido: valorTotalProdutos + valorTotalServicos
+            nome: cliente.nome,
+            totalGasto: totalGastoEmProdutos + totalGastoEmServicos
           };
         }));
     
-        // Sorting the results by total value consumed in descending order
-        totalValorConsumidoPorCliente.sort((a, b) => b.totalValorConsumido - a.totalValorConsumido);
+        // Ordenar do maior para o menor total gasto
+        totalGastoPorCliente.sort((a, b) => b.totalGasto - a.totalGasto);
     
-        // Taking the top 5 results
-        const top5Clientes = totalValorConsumidoPorCliente.slice(0, 5);
+        const top5Clientes = totalGastoPorCliente.slice(0, 5);
     
-        // Getting the complete details of the clients
-        const detalhesClientes = await Promise.all(top5Clientes.map(async (cliente:{clienteId: number, nome: string, totalValorConsumido:any}) => {
-          const clienteDetalhes = await prisma.cliente.findUnique({
-            where: {
-              id: cliente.clienteId
-            },
-            select: {
-              nome: true
-            }
-          });
-    
-          return {
-            ...clienteDetalhes,
-            totalValorConsumido: cliente.totalValorConsumido
-          };
-        }));
-    
-        console.log(detalhesClientes);
-        res.json(detalhesClientes);
+        res.json(top5Clientes);
       } catch (error) {
         res.status(500).json(error);
       }
     });
 
     // listar todos os PRODUTOS
-    router.get('/produto', async (req: Request,res: Response)=>{
-      try{
-        const produtos = await prisma.produto.findMany();
-        if(!produtos){
-          throw new Error('Não foi possível encontrar nenhum produto');
-        }
-        res.json(produtos);
-        }catch(err){
+    router.get('/produto', async (req: Request, res: Response) => {
+      try {
+          const produtos = await prisma.produto.findMany({
+              select: {
+                  id: true,
+                  nome: true,
+                  preco: true,
+                  quantidadeEstoque: true
+              }
+          });
+  
+          if (!produtos || produtos.length === 0) {
+              throw new Error('Não foi possível encontrar nenhum produto');
+          }
+  
+          res.json(produtos);
+      } catch (err) {
           res.status(400).json(err);
-        }
-    })
+      }
+  });  
 
     // listar todos os SERVIÇOS
-    router.get('/produto', async (req: Request,res: Response)=>{
+    router.get('/servicos', async (req: Request,res: Response)=>{
       try{
-        const serviços = await prisma.servico.findMany();
+        const serviços = await prisma.servico.findMany({
+          select: {
+            name: true,
+            price: true,
+        }
+        });
         if(!serviços){
           throw new Error('Não foi possível encontrar nenhum produto');
         }
