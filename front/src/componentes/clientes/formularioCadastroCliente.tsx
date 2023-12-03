@@ -8,51 +8,50 @@ export default function FormularioCadastroCliente() {
   const [ddd,setDdd] = useState("")
   const [numeroTelefone, setNumeroTelefone] = useState("");
   const [cpfValor, setCpfValor] = useState("");
-  const [dataEmissaoValor, setDataEmissaoValor] = useState("");
-  const [rgValor, setRgValor] = useState("");
-  const [empresaId, setEmpresaId] = useState("");
+  const [rgValor, setRgValor] = useState<string[]>([]);
   const [quantidadeRg, setQuantidadeRg] = useState(0);
+
+  const handleGeneroChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setGenero(event.target.value);
+  };  
+
+  // Manipuladores de eventos
+  const handleDddChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDdd(event.target.value);
+  };
+
+  const handleNumeroTelefoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNumeroTelefone(event.target.value);
+  };
 
   const handleQuantidadeRgChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuantidadeRg(parseInt(event.target.value, 10));
   };
 
+  const handleRgChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const updatedRgs = [...rgValor];
+    updatedRgs[index] = event.target.value;
+    setRgValor(updatedRgs);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     try {
-      // Enviar o CPF
-      const cpfResponse = await axios.post('http://localhost:5001/cpfs', {
-        valor: cpfValor,
-      });
-  
-      // Enviar os RGs
-      const rgIds = [];
-      for (let i = 0; i < quantidadeRg; i++) {
-        const rgResponse = await axios.post('http://localhost:5001/rgs', {
-          valor: rgValor[i],
-          dataEmissao: dataEmissaoValor[i]
-        });
-        rgIds.push(rgResponse.data.id);
-      }
-  
-      // Enviar o telefone
-      const telefoneResponse = await axios.post('http://localhost:5001/telefones', {
-        numero: numeroTelefone,
-        ddd: ddd
-      });
-      const telefoneId = telefoneResponse.data.id;
-  
       // Enviar o cliente com todas as informações relacionadas
       const clienteResponse = await axios.post('http://localhost:5001/cadastroCli', {
         nome,
         nomeSocial,
         genero,
-        numeroTelefone: telefoneId, // Altere para o ID do telefone
-        cpfValor: cpfResponse,
-        rgValor: rgIds,
+        cpfValor,
+        telefone: {
+          ddd,
+          numero: numeroTelefone,
+        },
+        rgValor
       });
-  
+      console.log(clienteResponse)
+      alert('Cliente cadastrado!')
       console.log('Cliente cadastrado:', clienteResponse.data);
     } catch (error) {
       console.error('Erro ao cadastrar o cliente:', error);
@@ -76,7 +75,7 @@ export default function FormularioCadastroCliente() {
               </div>
               <label htmlFor="genero">Gênero</label>
               <div className="input-field col s12">
-                <select id="genero" className="browser-default">
+                <select id="genero" className="browser-default" onChange={handleGeneroChange} value={genero}>
                   <option value="" disabled>Escolha o gênero</option>
                   <option value="1">Masculino</option>
                   <option value="2">Feminino</option>
@@ -96,8 +95,8 @@ export default function FormularioCadastroCliente() {
               </div>
               {!isNaN(quantidadeRg) && [...Array(quantidadeRg)].map((_, i) => (
                   <div key={i} className="input-field col s12">
-                      <input id={`rg_${i}`} type="text" className="validate" value={rgValor} onChange={(e) => setRgValor(e.target.value)} />
-                      <label htmlFor={`rg_${i}`}>Digite o n° do RG {i + 1}</label>
+                    <input id={`rg_${i}`} type="text" className="validate" value={rgValor[i] || ""} onChange={(e) => handleRgChange(e, i)} />
+                    <label htmlFor={`rg_${i}`}>Digite o n° do RG {i + 1}</label>
                   </div>
               ))}
               <div className="input-field col s12">
@@ -105,11 +104,11 @@ export default function FormularioCadastroCliente() {
                 <label htmlFor="data_emissao_rg">Data de emissão do RG</label>
               </div>
               <div className="input-field col s12">
-                <input id="ddd" type="text" className="validate" />
+                <input id="ddd" type="text" className="validate" value={ddd} onChange={handleDddChange} />
                 <label htmlFor="ddd">DDD</label>
               </div>
               <div className="input-field col s12">
-                <input id="telefone" type="text" className="validate" />
+                <input id="telefone" type="text" className="validate" value={numeroTelefone} onChange={handleNumeroTelefoneChange} />
                 <label htmlFor="telefone">Telefone</label>
               </div>
             </div>

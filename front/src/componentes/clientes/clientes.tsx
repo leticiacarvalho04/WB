@@ -2,37 +2,6 @@ import React, { useEffect, useState } from 'react';
 import './clientes.css'
 import axios from 'axios';
 
-const clientes = [
-  { nome:'Ana Clara', genero:'feminino'},
-  { nome:'Park Sunghoon', genero: 'masculino' },
-  { nome:'Audrey Duarte', genero: 'feminino' },
-  { nome:'João Silva', genero: 'masculino' },
-  { nome:'Maria Oliveira', genero: 'feminino'},
-  { nome:'Carlos Pereira', genero:'masculino'},
-  { nome:'Laura Souza', genero:'feminino'},
-  { nome:'Pedro Santos', genero:'masculino'},
-  { nome:'Juliana Oliveira', genero:'feminino'},
-  { nome:'Lucas Silva', genero:'masculino'},
-  { nome:'Fernanda Pereira', genero:'feminino'},
-  { nome:'Rafaela Oliveira', genero:'feminino'},
-  { nome:'Gustavo Souza', genero:'masculino'},
-  { nome:'Amanda Silva', genero: 'feminino'},
-  { nome:'Daniel Pereira', genero: 'masculino'},
-  { nome:'Luciana Oliveira', genero:'feminino'},
-  { nome:'Luiz Oliveira', genero:'masculino'},
-  { nome:'Camila Souza', genero:'feminino'},
-  { nome:'Mateus Silva', genero:'masculino'},
-  { nome:'Beatriz Pereira', genero:'feminino'},
-  { nome:'Enzo Oliveira', genero: 'masculino'},
-  { nome:'Larissa Silva', genero:'feminino'},
-  { nome:'Lucas Pereira', genero:'masculino'},
-  { nome:'Isabela Oliveira', genero:'feminino'},
-  { nome:'Carolina Silva', genero:'feminino'},
-  { nome:'Guilherme Oliveira', genero:'masculino'},
-  { nome:'Julia Silva', genero:'feminino'},
-  { nome:'Ricardo Pereira', genero:'masculino'}
-];
-
 interface Telefone {
   ddd: string;
   numero: string;

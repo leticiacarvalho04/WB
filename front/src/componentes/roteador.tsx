@@ -35,7 +35,7 @@ export function AppRoutes() {
                     <Route path="/atualizaDeletaCli" element={<ClienteDetails />} />
                     <Route path="/produtos" element={<ProdutoDetails />} />
                     <Route path="/servicos" element={<Servicos />} />
-                    <Route path="/cadastroprodserv" element={<FormularioCadastroProduto tema="purple darken-2" />} />
+                    <Route path="/cadastroprodserv" element={<FormularioCadastroProduto />} />
                     <Route path="/cadastrocliente" element={<FormularioCadastroCliente />} />
                     <Route path="/compraCliente" element={<Compra />}/>
                     <Route path="/listagem" element={<Listagem />}/>

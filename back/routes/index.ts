@@ -14,51 +14,46 @@ router.use(express.json());
 
 // Cadastrar cliente
 router.post('/cadastroCli', async (req: Request, res: Response) => {
-  const { nome, nomeSocial, genero, numeroTelefone, dataEmissao, cpfValor, rgValor } = req.body;
+  const { nome, nomeSocial, genero, cpfValor, telefone, rgValor } = req.body;
   try {
-    // Buscar o telefone pelo número
-    const telefone = await prisma.telefone.findFirst({
-      where: {
-        numero: numeroTelefone,
-      },
-    });    
-
-    if (!telefone) {
-      return res.status(400).json({ error: 'Telefone não encontrado' });
-    }
-
-    const novoCliente = await prisma.cliente.create({
+    const novoCliente = await prisma.Cliente.create({
       data: {
         nome: nome,
         nomeSocial: nomeSocial,
         genero: genero,
-        telefone:{
-          connect:{
-            id: telefone.id,
-          }
-        },
-        cpf: {
-          connect: {
-            valor: cpfValor
+        telefone: {
+          create: {
+            ddd: telefone.ddd,
+            numero: telefone.numero
           }
         },
         rgs: {
-          connect: rgValor.map((valor: string) => ({ valor })) // Conecte todos os RGs
-        },        
-        empresa: {
-          connect: {
-            id: 1
+          create: {
+            valor: rgValor,
+            dataEmissao: new Date()
           }
-        }
+        },
+        cpf: {
+          create: {
+            valor: cpfValor,
+            dataEmissao: new Date()
+          }
+        },
+        empresaId: 1
       },
-    });    
-    console.log(novoCliente);
+      include: {
+        telefone: true,
+        rgs: true,
+        cpf: true,
+      },
+    });
+    console.log(novoCliente)
     res.json(novoCliente);
   } catch (error) {
-    console.log(error);
     res.status(500).json(error);
   }
 });
+
 
 router.post('/telefones', async (req: Request, res: Response) => {
   const { ddd, numero } = req.body;
@@ -66,7 +61,7 @@ router.post('/telefones', async (req: Request, res: Response) => {
     const novoTelefone = await prisma.telefone.create({
       data: {
         ddd: ddd,
-        numero: numero,
+        numero: numero
       },
     });
     res.json(novoTelefone);
