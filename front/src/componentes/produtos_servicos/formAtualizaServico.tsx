@@ -9,8 +9,8 @@ interface Servicos {
 }
 
 export default function FormularioAtualizacaoServicos() {
-    const { id } = useParams<{ id: string }>();
-    const [servico, setServicos] = useState<Servicos>({
+  const { id } = useParams<{ id: string }>();
+  const [servico, setServico] = useState<Servicos>({
     name: '',
     descricao: '',
     price: 0,
@@ -20,42 +20,48 @@ export default function FormularioAtualizacaoServicos() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
-    setServicos((prevServicos) => ({
-      ...prevServicos,
+    setServico((prevServico) => ({
+      ...prevServico,
       [id]: value,
     }));
   };
 
   useEffect(() => {
-    const carregarDetalhesServicos = async () => {
+    const carregarDetalhesServico = async () => {
       try {
         const response = await axios.get(`http://localhost:5001/servicos/id/${id}`);
         const servicoCarregado: Servicos = response.data;
 
         // Atualiza o estado do servico com os detalhes carregados
-        setServicos(servicoCarregado);
+        setServico(servicoCarregado);
       } catch (error) {
-        console.error('Erro ao carregar detalhes do servico:', error);
+        console.error('Erro ao carregar detalhes do serviço:', error);
       }
     };
 
-    carregarDetalhesServicos();
+    carregarDetalhesServico();
   }, [id]);
 
   const handleAtualizarClick = async () => {
     try {
-      const response = await axios.put(`http://localhost:5001/servico/id/${id}`, servico);
+      const dataToSend = {
+        name: servico.name,
+        preco: servico.price,
+        descricao: servico.descricao
+      };
+  
+      const response = await axios.put(`http://localhost:5001/servico/id/${id}`, dataToSend);
       console.log(response.data);
-      alert(`Servicos atualizado!`)
+      alert(`Serviço atualizado!`);
     } catch (error) {
-      console.error(error);
+      console.error('Erro ao atualizar serviço:', error);
     }
   };  
 
   return (
     <div className="card">
       <div className="card-content">
-        <span className="card-title">Atualizar Servicos</span>
+        <span className="card-title">Atualizar Serviço</span>
         <div className="input-field col s12">
           <input
             id="name"
@@ -63,7 +69,7 @@ export default function FormularioAtualizacaoServicos() {
             value={servico.name}
             onChange={handleInputChange}
           />
-          <label htmlFor="name">Nome do Servicos</label>
+          <label htmlFor="name">Nome do Serviço</label>
         </div>
         <div className="input-field col s12">
           <textarea
