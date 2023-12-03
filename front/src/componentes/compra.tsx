@@ -127,8 +127,8 @@ export default function Compra() {
     }
     
     const handleComprarServico = () => {
-        if (metodoSelecionado === '3' && id && servicoId) {
-            const data = { servicoId }; // Se você já tem o servicoId disponível
+        if (id && servicoId) {
+            const data = { servicoId };
             axios.post(`http://localhost:5001/cliente/id/${id}/servico`, data)
                 .then(response => {
                     console.log(response.data);
@@ -138,9 +138,9 @@ export default function Compra() {
                     console.error('Erro ao comprar serviço pelo ID:', error);
                 });
         } else {
-            console.warn('Por favor, selecione o método de busca por ID e forneça o ID do cliente e o ID do serviço para comprar o serviço.');
+            console.warn('Por favor, forneça o ID do cliente e o ID do serviço para comprar o serviço.');
         }
-    };     
+    };    
 
     const handleComprarProduto = () => {
         if (metodoSelecionado === '3' && id) {
@@ -185,7 +185,7 @@ export default function Compra() {
                         </div>
                         {mostrarCampos && (
                             <div className="row">
-                                <div className="col s6 offset-s3 m1">
+                                <div className="col s12">
                                     <form className="col s12">
                                         <div className="row">
                                             <label htmlFor="compra">Escolha o que foi consumido</label>
@@ -203,10 +203,10 @@ export default function Compra() {
                                                 </div>
                                             )}
                                             {mSelecionado === 'Servico' && (
-                                                <div className="input-field col s12">
-                                                    <input id="id_pro" type="text" className="validate" />
-                                                    <label htmlFor="id_pro">Insira o n° do serviço consumido</label>
-                                                </div>
+                                                    <div className="input-field col s12">
+                                                        <input id="id_servico" type="text" className="validate" value={servicoId} onChange={(e) => setServicoId(e.target.value)} />
+                                                        <label htmlFor="id_servico">Insira o n° do serviço consumido</label>
+                                                    </div>
                                             )}
                                         </div>
                                         <div className="row">
@@ -217,11 +217,11 @@ export default function Compra() {
                                                         <i className="material-icons right">send</i>
                                                     </button>
                                                 )}
-                                                {mSelecionado === 'Servico' && (
+                                                 {mSelecionado === 'Servico' && (
                                                     <button className={estiloBotao} type="submit" name="action" onClick={handleComprarServico}>
                                                         Comprar Serviço
                                                         <i className="material-icons right">send</i>
-                                                    </button>
+                                                    </button>                                                
                                                 )}
                                             </div>
                                         </div>
