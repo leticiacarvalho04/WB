@@ -20,29 +20,42 @@ export default function FormularioCadastroProduto(){
 
   let estiloBotao = `btn waves-effect waves-light`;
 
-  const handleSubmitProduto = async (event: any) => {
+  const handleSubmitProduto = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5001/cadastroPro", formData);
+      const response = await axios.post("http://localhost:5001/cadastroPro", {
+        nome: formData.nome,
+        descricao: formData.descricao,
+        preco: Number(formData.preco), // Certifique-se de enviar como número
+        quantidadeEstoque: parseInt(formData.quantidadeEstoque), // Certifique-se de enviar como número inteiro
+        empresaId: formData.empresaId,
+      });
+  
       console.log(response.data);
-      // Faça algo com a resposta, se necessário
     } catch (error) {
       console.error("Erro ao cadastrar produto:", error);
       // Trate o erro, se necessário
     }
-  };
+  };  
 
-  const handleSubmitServico = async (event: any) => {
+  const handleSubmitServico = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5001/cadastroServ", formData);
+      const response = await axios.post("http://localhost:5001/cadastroServ", {
+        name: formData.name,
+        descricao: formData.descricao,
+        price: parseInt(String(formData.price))
+      });
+      console.log(formData.name)
+      console.log(formData.descricao)
+      console.log(formData.price)
       console.log(response.data);
       // Faça algo com a resposta, se necessário
     } catch (error) {
-      console.error("Erro ao cadastrar servico:", error);
+      console.error("Erro ao cadastrar serviço:", error);
       // Trate o erro, se necessário
     }
-  };
+  };  
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
@@ -132,14 +145,14 @@ export default function FormularioCadastroProduto(){
               <div className="row">
                 <div className="input-field col s12">
                   <input
-                    id="nome"
+                    id="name"
                     type="text"
                     className="validate"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
                   />
-                  <label htmlFor="nome">Nome</label>
+                  <label htmlFor="name">Nome</label>
                 </div>
                 <div className="input-field col s12">
                   <input
@@ -154,20 +167,20 @@ export default function FormularioCadastroProduto(){
                 </div>
                 <div className="input-field col s12">
                   <input
-                    id="preco"
-                    type="text"
+                    id="price"
+                    type="number"
                     className="validate"
                     name="price"
                     value={formData.price}
                     onChange={handleInputChange}
                   />
-                  <label htmlFor="preco">Preço de Venda</label>
+                  <label htmlFor="price">Preço</label>
                 </div>
               </div>
               <div className="row">
                 <div className="col s12">
-                  <button className={estiloBotao} type="submit" name="action">
-                    Submit<i className="material-icons right">send</i>
+                  <button className={estiloBotao} type="submit">
+                    Cadastrar Serviço
                   </button>
                 </div>
               </div>

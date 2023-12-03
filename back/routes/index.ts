@@ -110,7 +110,7 @@ router.post('/cpfs', async (req: Request, res: Response) => {
 });
 
 router.post('/cadastroPro',async(req:Request,res:Response)=>{
-  const {nome, descricao, preco, quantidadeEstoque, empresaId} = req.body
+  const {nome, descricao, preco, quantidadeEstoque} = req.body
   try{
     const novoProduto = await prisma.produto.create({
       data: {
@@ -120,7 +120,7 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
         quantidadeEstoque: quantidadeEstoque,
         empresa: {
           connect: {
-            id: empresaId
+            id: 1
           }
         }
       },
@@ -134,22 +134,25 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
   })
 
   router.post('/cadastroServ',async(req:Request,res:Response)=>{
-    const {name, price, descricao, empresaId} = req.body
+    const {name, price, descricao} = req.body
+    console.log(name)
+    console.log(descricao)
+    console.log(price)
     try{
-      const novoProduto = await prisma.produto.create({
+      const novoServico = await prisma.servico.create({
         data: {
-          nome: name,
+          name: name,
           descricao: descricao,
-          preco: price,
+          price: price,
           empresa: {
             connect: {
-              id: empresaId
+              id: 1
             }
           }
         },
       });
-      console.log(novoProduto);
-      res.json(novoProduto);
+      console.log(novoServico);
+      res.json(novoServico);
     } catch (error) {
       console.log(error);
       res.status(500).json(error);
