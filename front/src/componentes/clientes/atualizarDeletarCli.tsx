@@ -1,211 +1,137 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import 'materialize-css/dist/css/materialize.min.css';
+import './clientes.css';
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-type Props = {
-    id: string,
-    tema: string;
-    cpf: string;
-};
+interface CPF {
+    valor: string;
+    // outros campos do CPF, se houverem
+}
 
-interface State {
-    activeTab: string;
-    id: string,
+interface Cliente {
+    id: number;
     nome: string;
-    tema: string;
-    cpf: string;
-    metodoSelecionado: string;
-    buscou: boolean;
+    cpf: CPF;
+    // outros campos do Cliente, se houverem
 }
 
-const clientes = [
-    { id: '1', nome: 'João da Silva', cpf: '12345678900' },
-    { id: '2', nome: 'Maria Oliveira', cpf: '98765432100' },
-    { id: '3', nome: 'Lucas Oliveira', cpf: '55555555500' },
-    // adicione mais produtos conforme necessário
-];
 
-function buscarCliente(query: string) {
-    // verifica se a consulta é um ID
-    if (clientes.some(cliente => cliente.id === query)) {
-        return clientes.find(cliente => cliente.id === query);
-    }
-    // verifica se a consulta é um CPF
-    else if (clientes.some(cliente => cliente.cpf === query)) {
-        return clientes.find(cliente => cliente.cpf === query);
-    }
-    // se não for um ID ou CPF, assume que é um nome
-    else if (clientes.some(cliente => cliente.nome.toLowerCase() === query.toLowerCase())) {
-        return clientes.find(cliente => cliente.nome.toLowerCase() === query.toLowerCase());
-    }
-
-    // retorna null se o cliente não for encontrado
-    return null;
-}
-
-export default function ClienteDetails(props: any) {
+export default function ClienteDetails() {
     const [state, setState] = useState({
-        id: props.id,
-        nome: '',
-        cpf: props.cpf,
-        metodoSelecionado: '',
-        buscou: false,
+        cpf: '',
+        clientes: [] as Cliente[],
+        clientesEncontrado: false,
+        mostrarBotaoAtualizar: false
     });
 
     const navigate = useNavigate();
 
-    const handleMetodoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const { cpf, clientes, clientesEncontrado, mostrarBotaoAtualizar } = state;
+
+    const handleBuscarClick = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5001/cliente/cpf/${cpf}`);
+            const clientesData = response.data;
+            
+            if (clientesData) {
+                console.log('Cliente encontrado!');
+                setState({
+                    ...state,
+                    clientesEncontrado: true,
+                    mostrarBotaoAtualizar: true
+                });
+            } else {
+                console.log('Cliente não encontrado.');
+                setState({
+                    ...state,
+                    clientesEncontrado: false,
+                    mostrarBotaoAtualizar: false
+                });
+            }
+        } catch (error) {
+            console.error('Erro ao buscar clientes por ID:', error);
+        }
+    };    
+
+    const handleDeletarClick = async () => {
+        try {
+            await axios.delete(`http://localhost:5001/clientes/cpf/${cpf}`);
+            alert('Cliente deletado!');
+            console.log('Cliente deletado!');
+            setState({
+                ...state,
+                clientesEncontrado: false,
+                cpf: ''
+            });
+        } catch (error) {
+            console.error('Erro ao deletar clientes:', error);
+        }
+    };
+
+    const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.target;
         setState({
             ...state,
-            metodoSelecionado: event.target.value,
+            cpf: value
         });
     };
 
-    const handleBuscarClick = () => {
-        const { metodoSelecionado, cpf, nome, id } = state;
-
-        let cliente;
-        if (metodoSelecionado) {
-            if (metodoSelecionado === '1' && cpf) {
-                console.log(`Busca por CPF: ${cpf}`);
-                cliente = buscarCliente(cpf)
-            } else if (metodoSelecionado === '2' && nome) {
-                console.log(`Busca por Nome: ${nome}`);
-                cliente = buscarCliente(nome)
-            } else if (metodoSelecionado === '3' && id) {
-                console.log(`Busca por ID: ${id}`);
-                cliente = buscarCliente(id)
-            }
-
-        }
-
-        if (cliente) {
-            setState({
-                id: cliente.id,
-                nome: cliente.nome,
-                cpf: cliente.cpf,
-                metodoSelecionado: '',
-                buscou: true
-            })
-        }
-    }
-
-    const renderInputs = () => {
-        const { metodoSelecionado } = state;
-
-        return (
-            <>
-                {metodoSelecionado === '1' && (
-                    <div className="input-field col s12">
-                        <input
-                            id="cpf"
-                            type="text"
-                            className="validate"
-                            value={state.cpf}
-                            onChange={(e) => setState(prevState => ({ ...prevState, cpf: e.target.value }))}
-                        />
-                        <label htmlFor="cpf">CPF</label>
-                    </div>
-                )}
-                {metodoSelecionado === '2' && (
-                    <div className="input-field col s12">
-                        <input
-                            id="nome"
-                            type="text"
-                            className="validate"
-                            value={state.nome}
-                            onChange={(e) => setState(prevState => ({ ...prevState, nome: e.target.value }))}
-                        />
-                        <label htmlFor="nome">Nome</label>
-                    </div>
-                )}
-                {metodoSelecionado === '3' && (
-                    <div className="input-field col s12">
-                        <input
-                            id="id"
-                            type="text"
-                            className="validate"
-                            value={state.id}
-                            onChange={(e) => setState(prevState => ({ ...prevState, id: e.target.value }))}
-                        />
-                        <label htmlFor="id">ID</label>
-                    </div>
-                )}
-                <div>
-                    <ul>
-                        <li>1 - João da Silva (CPF: 12345678900)</li>
-                        <li>2 - Maria Oliveira (CPF: 98765432100)</li>
-                        <li>3 - Lucas Oliveira (CPF: 55555555500)</li>
-                    </ul>
-                </div>
-            </>
-        );
-    }
-
-    const handleDeletarClick = () => {
-        alert('Cliente deletado!');
-    }
-
-    const componentDidMount = () => {
+    const handleSearchButtonClick = () => {
         handleBuscarClick();
-    }
+    };
 
-    const renderDetalhesCliente = () => {
-        const { nome, cpf, id } = state;
+    useEffect(() => {
+        listarClientes();
+    }, []);
 
-        return (
-            <div className="card">
-                <div className="card-content">
-                    <span className="card-title">Detalhes do Cliente</span>
-                    <p>Nome: {nome}</p>
-                    <p>ID: {id}</p>
-                    <p>CPF: {cpf}</p>
-                    <button className="btn waves-effect waves-light" onClick={handleDeletarClick}>
-                        Deletar
-                        <i className="material-icons right">delete</i>
-                    </button>
-                    <button className="btn waves-effect waves-light" onClick={handleAtualizarClick}>
-                        Atualizar
-                        <i className="material-icons right">edit</i>
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
-    const handleAtualizarClick = () => {
-        // Use navigate para redirecionar para a rota do formulário de atualização
-        navigate(`/atualizacaoCliente`);
-    }
+    const listarClientes = async () => {
+        try {
+            const response = await axios.get('http://localhost:5001/clientes');
+            const clientesData = response.data.sort((a: Cliente, b: Cliente) => a.id - b.id);
+            setState({ ...state, clientes: clientesData });
+            console.log(response.data);
+        } catch (error) {
+            console.error('Erro ao listar clientess:', error);
+        }
+    };
 
     return (
         <div className="row center-align">
-            <div className="card">
-                <div className="card-content">
-                    <span className="card-title">Buscar Cliente</span>
-                    <div className="input-field col s12">
-                        <option value="" disabled></option>
-                        <select
-                            id="metodo"
-                            className="browser-default"
-                            onChange={handleMetodoChange}
-                            value={state.metodoSelecionado}
-                        >
-                            <option value=''></option>
-                            <option value="1">Procurar por CPF</option>
-                            <option value="2">Procurar por Nome</option>
-                            <option value="3">Procurar por ID</option>
-                        </select>
-                        <label>Método de Busca</label>
-                    </div>{renderInputs()}
-                    <div className="input-field col s12">
-                        <button className="btn waves-effect waves-light" onClick={handleBuscarClick}>
+            <div className="col s12">
+                <div className="card">
+                    <div className="card-content">
+                        <div className="input-field col s12">
+                            <input
+                                type="text"
+                                id="id"
+                                value={cpf}
+                                onChange={handleIdChange}
+                            />
+                            <label htmlFor="id">CPF do cliente</label>
+                        </div>
+                        {clientes.map((cliente: Cliente) => (
+                            <div key={cliente.id}>
+                                <p>{cliente.id} - {cliente.nome} - {cliente.cpf.valor}</p>
+                            </div>
+                        ))}
+                        <button className="btn waves-effect waves-light" onClick={handleSearchButtonClick}>
                             Buscar
                             <i className="material-icons right">search</i>
                         </button>
+                        {clientesEncontrado && (
+                            <button className="btn waves-effect waves-light" onClick={handleDeletarClick}>
+                                Deletar
+                                <i className="material-icons right">delete</i>
+                            </button>
+                        )}
+                        {mostrarBotaoAtualizar && (
+                            <button className="btn waves-effect waves-light" onClick={() => navigate(`/atualizacaoCliente/cpf/${cpf}`)}>
+                                Atualizar
+                                <i className="material-icons right">update</i>
+                            </button>
+                        )}
                     </div>
-                    {((state.nome || state.id || state.cpf) && state.buscou) && (
-                        renderDetalhesCliente()
-                    )}
                 </div>
             </div>
         </div>

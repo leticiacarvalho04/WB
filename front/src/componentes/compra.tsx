@@ -1,208 +1,257 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import 'materialize-css/dist/css/materialize.min.css';
-import './compra.css'
+import './compra.css';
+import axios from "axios";
 
-type Props = {
-    id: string,
-    cpf: string,
-    tema: string;
-};
+interface Servico{
+    id: number;
+    name: string,
+    price: number,
+}
 
-interface State {
-    activeTab: string;
-    id: string,
+interface Produto{
+    id: number;
     nome: string;
-    tema: string;
-    cpf: string;
-    produto: string;
-    servico: string;
-    buscou: boolean;
-    metodoSelecionado: string;
-    mSelecionado: string;
+    descricao: string;
+    preco: number;
+}
+interface CPF{
+    valor: string;
 }
 
-const clientes = [
-    { id: '1', nome: 'João da Silva', cpf:'12345678900' },
-    { id: '2', nome: 'Maria Oliveira', cpf:'98765432100' },
-    { id: '3', nome: 'Lucas Oliveira', cpf:'55555555500' }
-];
-
-function buscarCliente(query: string) {
-    // verifica se a consulta é um ID
-    if (clientes.some(cliente => cliente.id === query)) {
-        return clientes.find(cliente => cliente.id === query);
-    }
-    // verifica se a consulta é um CPF
-    else if (clientes.some(cliente => cliente.cpf === query)) {
-        return clientes.find(cliente => cliente.cpf === query);
-    }
-    // se não for um ID ou CPF, assume que é um nome
-    else if (clientes.some(cliente => cliente.nome.toLowerCase() === query.toLowerCase())) {
-        return clientes.find(cliente => cliente.nome.toLowerCase() === query.toLowerCase());
-    }
-
-    // retorna null se o cliente não for encontrado
-    return null;
+interface Cliente {
+    id: string,
+    nome: string,
+    cpf: CPF,
 }
 
+export default function Compra() {
+    const [activeTab, setActiveTab] = useState<string>('delete');
+    const [id, setId] = useState<string>();
+    const [nome, setNome] = useState<string>('');
+    const [cpf, setCpf] = useState<string>('');
+    const [metodoSelecionado, setMetodoSelecionado] = useState<string>('');
+    const [produto, setProduto] = useState<string>('');
+    const [servico, setServico] = useState<Servico[]>([]);
+    const [mSelecionado, setMSelecionado] = useState<string>('');
+    const [mostrarCampos, setMostrarCampos] = useState<boolean>(false);
 
-export default class Compra extends Component<Props, State> {
+    const [clientes, setClientes] = useState<Cliente[]>([]);
 
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            activeTab: 'delete',
-            id: props.id,
-            nome: '',
-            cpf: props.cpf,
-            tema: props.tema,
-            metodoSelecionado: '',
-            produto: '',
-            servico: '',
-            buscou: false,
-            mSelecionado: ''
-        };
-        this.handleSelectionChange = this.handleSelectionChange.bind(this);
-    }
-
-    handleSelectionChange(event: any) {
-        this.setState({ mSelecionado: event.target.value });
-    }
-
-    handleMetodoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({
-            metodoSelecionado: event.target.value
-        });
-    }
-
-    handleBuscarClick = () => {
-        const { metodoSelecionado, cpf, nome, id } = this.state;
-    
-        let cliente;
-        if (metodoSelecionado) {
-            if (metodoSelecionado === '1' && cpf) {
-                console.log(`Busca por CPF: ${cpf}`);
-                cliente = buscarCliente(cpf)
-            } else if (metodoSelecionado === '2' && nome) {
-                console.log(`Busca por Nome: ${nome}`);
-                cliente = buscarCliente(nome)
-            } else if (metodoSelecionado === '3' && id) {
-                console.log(`Busca por ID: ${id}`);
-                cliente = buscarCliente(id)
-            } 
-            
-        }
-        
-        if (cliente){
-            this.setState({
-                id: cliente.id,
-                nome: cliente.nome,
-                cpf: cliente.cpf,
-                buscou: true
+    useEffect(() => {
+        axios.get('http://localhost:5001/clientes/comprar')
+            .then(response => {
+                setClientes(response.data);
             })
-        }
-    }
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    }, []);
 
-    renderInputs() {
-        const { metodoSelecionado } = this.state;
-    
+    useEffect(() => {
+        const tabs = document.querySelectorAll('.tabs');
+        M.Tabs.init(tabs);
+    }, []);
+
+    const handleSelectionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setMSelecionado(event.target.value);
+    };
+
+    const handleMetodoChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setMetodoSelecionado(event.target.value);
+    };
+
+    const buscarCliente = async (query: string): Promise<Cliente | null> => {
+        try {
+            if (metodoSelecionado === '1') {
+                const response = await axios.get(`http://localhost:5001/cliente/cpf/${query}`);
+                return response.data;
+            } else if (metodoSelecionado === '2') {
+                const response = await axios.get(`http://localhost:5001/cliente/nome/${query}`);
+                return response.data;
+            } else if (metodoSelecionado === '3') {
+                const response = await axios.get(`http://localhost:5001/cliente/id/${query}`);
+                return response.data;
+            }
+        } catch (error) {
+            console.error('Erro ao buscar cliente:', error);
+            return null;
+        }
+        return null;
+    };    
+
+    const handleBuscarClick = async () => {
+        const query = metodoSelecionado === '1' ? cpf : metodoSelecionado === '2' ? nome : id;
+        if (query) {
+            try {
+                const cliente = await buscarCliente(query);
+                if (cliente) {
+                    setId(cliente.id);
+                    setNome(cliente.nome);
+                    setCpf(cliente.cpf.valor);
+                    setMostrarCampos(true);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar cliente:', error);
+            }
+        } else {
+            console.error('Query is undefined');
+        }
+    };    
+
+    const renderInputs = () => {
         return (
             <>
                 {metodoSelecionado === '1' && (
                     <div className="input-field col s12">
-                        <input id="cpf" type="text" className="validate" value={this.state.cpf} onChange={(e) => this.setState({ cpf: e.target.value })} />
+                        <input id="cpf" type="text" className="validate" value={cpf} onChange={(e) => setCpf(e.target.value)} />
                         <label htmlFor="cpf">CPF</label>
                     </div>
                 )}
                 {metodoSelecionado === '2' && (
                     <div className="input-field col s12">
-                        <input id="nome" type="text" className="validate" value={this.state.nome} onChange={(e) => this.setState({ nome: e.target.value })} />
+                        <input id="nome" type="text" className="validate" value={nome} onChange={(e) => setNome(e.target.value)} />
                         <label htmlFor="nome">Nome</label>
                     </div>
                 )}
                 {metodoSelecionado === '3' && (
                     <div className="input-field col s12">
-                        <input id="id" type="text" className="validate" value={this.state.id} onChange={(e) => this.setState({ id: e.target.value })} />
+                        <input id="id" type="text" className="validate" value={id} onChange={(e) => setId(e.target.value)} />
                         <label htmlFor="id">ID</label>
                     </div>
                 )}
                 <div>
                     <ul>
-                        <li>1 - João da Silva (CPF: 12345678900)</li>
-                        <li>2 - Maria Oliveira (CPF: 98765432100)</li>
-                        <li>3 - Lucas Oliveira (CPF: 55555555500)</li>
+                        {clientes.map((cliente: Cliente) => (
+                            <li key={cliente.id}>{`${cliente.id} - ${cliente.nome} (CPF: ${cliente.cpf.valor})`}</li>
+                        ))}
                     </ul>
                 </div>
             </>
         );
     }
     
-    handleDeletarClick = () => {
-        alert('Serviço deletado!');
-    }    
+    const handleComprarServico = () => {
+        if (metodoSelecionado === '1' && cpf) {
+            axios.get(`http://localhost:5001/cliente/cpf/${cpf}/servico`)
+                .then(response => {
+                    console.log(response.data);
+                    alert('Serviço comprado!');
+                })
+                .catch(error => {
+                    console.error('Erro ao comprar servico pelo CPF:', error);
+                });
+        } else if (metodoSelecionado === '2' && nome) {
+            axios.get(`http://localhost:5001/cliente/nome/${nome}/servico`)
+                .then(response => {
+                    console.log(response.data);
+                    alert('Serviço comprado!');
+                })
+                .catch(error => {
+                    console.error('Erro ao comprar servico pelo nome:', error);
+                });
+        } else if (metodoSelecionado === '3' && id) {
+            axios.get(`http://localhost:5001/cliente/id/${id}/servico`)
+                .then(response => {
+                    console.log(response.data);
+                    alert('Serviço comprado!');
+                })
+                .catch(error => {
+                    console.error('Erro ao comprar servico pelo ID:', error);
+                });
+        } else {
+            console.warn('Por favor, selecione um método válido e forneça os detalhes necessários (ID, CPF ou Nome).');
+        }
+    };
 
-    handleTabClick = (tabName: string) => {
-        this.setState({
-            activeTab: tabName
-        });
-    }
+    const handleComprarProduto = () => {
+        if (metodoSelecionado === '1' && cpf) {
+            axios.get(`http://localhost:5001/cliente/cpf/${cpf}/produto`)
+                .then(response => {
+                    console.log(response.data);
+                    alert('Produto comprado!');
+                })
+                .catch(error => {
+                    console.error('Erro ao comprar produto pelo CPF:', error);
+                });
+        } else if (metodoSelecionado === '2' && nome) {
+            axios.get(`http://localhost:5001/cliente/nome/${nome}/produto`)
+                .then(response => {
+                    console.log(response.data);
+                    alert('Produto comprado!');
+                })
+                .catch(error => {
+                    console.error('Erro ao comprar produto pelo nome:', error);
+                });
+        } else if (metodoSelecionado === '3' && id) {
+            axios.get(`http://localhost:5001/cliente/id/${id}/produto`)
+                .then(response => {
+                    console.log(response.data);
+                    alert('Produto comprado!');
+                })
+                .catch(error => {
+                    console.error('Erro ao comprar produto pelo ID:', error);
+                });
+        } else {
+            console.warn('Por favor, selecione um método válido e forneça os detalhes necessários (ID, CPF ou Nome).');
+        }
+    };    
 
-    componentDidMount() {
+    useEffect(() => {
         const tabs = document.querySelectorAll('.tabs');
         M.Tabs.init(tabs);
-    }
+    }, []);
 
-    render() {
-        let estiloBotao = `btn waves-effect waves-light ${this.props.tema}`;
-        
-        return (
-            <div className="row center-align">
-                <div className="searchTab">
-                    <div className="card">
-                        <div className="card-content">
-                            <span className="card-title">Comprar Produto ou Serviço</span>
-                            <div className="input-field col s12">
-                                <option value="" disabled></option>
-                                <select
-                                    id="metodo"
-                                    className="browser-default"
-                                    onChange={this.handleMetodoChange}
-                                    value={this.state.metodoSelecionado}
-                                >
-                                    <option value=''></option>
-                                    <option value="1">Procurar por CPF</option>
-                                    <option value="2">Procurar por Nome</option>
-                                    <option value="3">Procurar por ID</option>
-                                </select>
-                                <label>Método de Busca</label>
-                            </div>
-                            {this.renderInputs()}
-                            <div className="input-field col s12">
-                                <button className="btn waves-effect waves-light" onClick={this.handleBuscarClick}>
-                                    Buscar
-                                    <i className="material-icons right">search</i>
-                                </button>
-                            </div>
-                            {((this.state.nome || this.state.id || this.state.cpf) && this.state.buscou) && (
+    let estiloBotao = `btn waves-effect waves-light`;
+
+    return (
+        <div className="row center-align">
+            <div className="searchTab">
+                <div className="card">
+                    <div className="card-content">
+                        <span className="card-title">Comprar Produto ou Serviço</span>
+                        <div className="input-field col s12">
+                            <option value="" disabled></option>
+                            <select
+                                id="metodo"
+                                className="browser-default"
+                                onChange={handleMetodoChange}
+                                value={metodoSelecionado}
+                            >
+                                <option value=''></option>
+                                <option value="1">Procurar por CPF</option>
+                                <option value="2">Procurar por Nome</option>
+                                <option value="3">Procurar por ID</option>
+                            </select>
+                            <label>Método de Busca</label>
+                        </div>
+                        {renderInputs()}
+                        <div className="input-field col s12">
+                            <button className="btn waves-effect waves-light" onClick={handleBuscarClick}>
+                                Buscar
+                                <i className="material-icons right">search</i>
+                            </button>
+                        </div>
+                        {mostrarCampos && (
                             <div className="row">
                                 <div className="col s6 offset-s3 m1">
                                     <form className="col s12">
                                         <div className="row">
                                             <label htmlFor="compra">Escolha o que foi consumido</label>
                                             <div className="input-field col s12">
-                                                <select id="compra" className="browser-default" onChange={this.handleSelectionChange}>
+                                                <select id="compra" className="browser-default" onChange={handleSelectionChange}>
                                                     <option value="">Escolha o que foi consumido</option>
                                                     <option value="Produto">Produto</option>
                                                     <option value="Servico">Serviço</option>
                                                 </select>
                                             </div>
-                                            {this.state.mSelecionado === 'Produto' && (
+                                            {mSelecionado === 'Produto' && (
                                                 <div className="input-field col s12">
                                                     <input id="id_pro" type="text" className="validate" />
                                                     <label htmlFor="id_pro">Insira o n° do produto consumido</label>
                                                 </div>
                                             )}
-                                            {this.state.mSelecionado === 'Servico' && (
+                                            {mSelecionado === 'Servico' && (
                                                 <div className="input-field col s12">
                                                     <input id="id_pro" type="text" className="validate" />
                                                     <label htmlFor="id_pro">Insira o n° do serviço consumido</label>
@@ -211,20 +260,27 @@ export default class Compra extends Component<Props, State> {
                                         </div>
                                         <div className="row">
                                             <div className="col s12">
-                                                <button className={estiloBotao} type="submit" name="action" onClick={() => alert('Comprado com sucesso!')}>
-                                                    Submit
-                                                    <i className="material-icons right">send</i>
-                                                </button>
+                                                {mSelecionado === 'Produto' && (
+                                                    <button className={estiloBotao} type="submit" name="action" onClick={handleComprarProduto}>
+                                                        Comprar Produto
+                                                        <i className="material-icons right">send</i>
+                                                    </button>
+                                                )}
+                                                {mSelecionado === 'Servico' && (
+                                                    <button className={estiloBotao} type="submit" name="action" onClick={handleComprarServico}>
+                                                        Comprar Serviço
+                                                        <i className="material-icons right">send</i>
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                             </div>
-                            )}
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>
-        );
-    }
-}
+        </div>
+    );
+}    

@@ -14,7 +14,7 @@ router.use(express.json());
 
 // Cadastrar cliente
 router.post('/cadastroCli', async (req: Request, res: Response) => {
-  const { nome, nomeSocial, genero, numeroTelefone, dataEmissao, cpfValor, rgValor, empresaId } = req.body;
+  const { nome, nomeSocial, genero, numeroTelefone, dataEmissao, cpfValor, rgValor } = req.body;
   try {
     // Buscar o telefone pelo número
     const telefone = await prisma.telefone.findFirst({
@@ -49,7 +49,7 @@ router.post('/cadastroCli', async (req: Request, res: Response) => {
         },
         empresa: {
           connect: {
-            id: empresaId
+            id: 1
           }
         }
       },
@@ -265,7 +265,7 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
     // Atualizar o cliente pelo cpf
     router.put('/clientes/cpf/:cpfValor', async (req: Request, res: Response) => {
       const { cpfValor } = req.params;
-      const { novoNome, nomeSocial, genero, telefone, ddd, numeroTelefone, rgValor, empresaId } = req.body;
+      const { novoNome, nomeSocial, genero, telefone, rgValor } = req.body; // Mudança no nome da variável para coincidir com o formulário
     
       try {
         const cliente = await prisma.cliente.findFirst({
@@ -310,7 +310,7 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
             nomeSocial: nomeSocial,
             genero: genero,
             cpfValor: cpfValor,
-            empresaId: empresaId
+            empresaId: 1
           },
         });
     
@@ -324,13 +324,13 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
     // Atualiza um serviço pelo ID
     router.put('/servico/id/:id', async (req: Request, res: Response) => {
       const { id } = req.params;
-      const { name, descricao, preco, empresaId } = req.body;
+      const { name, descricao, preco } = req.body;
     
       try {
         const servico = await prisma.Servico.upsert({
           where: { id: Number(id) },
-          update: { name: name, descricao: descricao, price: preco, empresaId: empresaId },
-          create: { name: name, descricao: descricao, price: preco, empresaId: empresaId },
+          update: { name: name, descricao: descricao, price: preco, empresaId: 1 },
+          create: { name: name, descricao: descricao, price: preco, empresaId: 1 },
         });
     
         console.log(servico)
@@ -342,23 +342,24 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
     });    
 
     // Atualiza um serviço pelo nome
-    router.put('/servico/nome/:nome', async (req: Request, res: Response) => {
-      const { nome } = req.params;
-      const { novoNome, descricao, preco, empresaId } = req.body;
-
+    router.put('/servico/id/:id', async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const { name, descricao, price } = req.body;
+    
       try {
         const servico = await prisma.Servico.upsert({
-          where: { name: nome },
-          update: { name: novoNome, descricao: descricao, price: preco, empresaId: empresaId },
-          create: { name: novoNome, descricao: descricao, price: preco, empresaId: empresaId }
+          where: { id: Number(id) },
+          update: { name, descricao, price, empresaId: 1 },
+          create: { name, descricao, price, empresaId: 1 },
         });
-
+    
+        console.log(servico);
         res.json(servico);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).json(error);
       }
-    });
+    });    
 
     // Atualiza um produto pelo ID
     router.put('/produto/id/:id', async (req: Request, res: Response) => {
@@ -998,6 +999,82 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       } catch (error) {
         res.status(500).json(error);
       }
+    });     
+    
+    // Buscar cliente pelo CPF
+    router.get('/cliente/cpf/:cpf', async (req: Request, res: Response) => {
+      const { cpf } = req.params;
+      console.log('CPF recebido:', cpf);
+      try {
+        const cliente = await prisma.cliente.findUnique({
+          where: {
+            cpfValor: cpf
+          },
+          select:{
+            id: true,
+            nome: true,
+            cpf: {
+              select: {
+                valor: true
+              }
+            }
+          }
+        });
+        res.json(cliente);
+      } catch (error) {
+        res.status(500).json({ error });
+      }
+    });    
+
+// Buscar cliente pelo ID
+router.get('/cliente/id/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const cliente = await prisma.cliente.findUnique({
+      where: {
+        id: Number(id)
+      }
+    });
+    res.json(cliente);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar cliente pelo ID' });
+  }
+});
+
+// Buscar cliente pelo nome
+router.get('/cliente/nome/:nome', async (req: Request, res: Response) => {
+  const { nome } = req.params;
+  try {
+    const clientes = await prisma.cliente.findMany({
+      where: {
+        nome: {
+          contains: nome
+        }
+      }
+    });
+    res.json(clientes);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar cliente pelo nome' });
+  }
+});
+
+    router.get('/clientes/comprar', async (req: Request, res: Response) => {
+      try {
+        const clientes = await prisma.cliente.findMany({
+          select:{
+            id: true,
+            nome: true,
+            cpf: {
+              select: {
+                valor: true
+              }
+            }
+          }
+        });
+        res.json(clientes);
+      } catch (error) {
+        res.status(500).json(error);
+      }
     });       
 
     // listar os clientes por GÊNERO
@@ -1239,6 +1316,30 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       } catch (err) {
           res.status(400).json(err);
       }
+    });
+
+    router.get('/servicos/id/:id', async (req: Request, res: Response) => {
+      try {
+          const servico = await prisma.servico.findFirst({
+              where: {
+                  id: Number(req.params.id)
+              },
+              select: {
+                  id: true,
+                  name: true,
+                  descricao: true,
+                  price: true
+              }
+          });
+  
+          if (!servico) {
+              throw new Error(`Não foi possível encontrar o serviço com o id ${req.params.id}`);
+          }
+  
+          res.json(servico);
+      } catch (err) {
+          res.status(400).json(err);
+      }
   });
   
 
@@ -1267,6 +1368,7 @@ router.post('/cadastroPro',async(req:Request,res:Response)=>{
       try{
         const serviços = await prisma.servico.findMany({
           select: {
+            id: true,
             name: true,
             price: true,
         }
