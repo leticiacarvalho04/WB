@@ -46,7 +46,7 @@ export default function FormularioCadastroCliente() {
       });
   
       // Crie o Cliente
-      const clienteResponse = await axios.post('http://localhost:5001/cliente', {
+      const clienteResponse = await axios.post('http://localhost:5001/cadastroCliente', {
         nome,
         nomeSocial,
         genero,

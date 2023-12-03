@@ -3,6 +3,10 @@ import 'materialize-css/dist/css/materialize.min.css';
 import './compra.css';
 import axios from "axios";
 
+const selectStyle = {
+    width: '100%',
+};
+
 interface Servico{
     id: number;
     name: string,
@@ -33,10 +37,12 @@ export default function Compra() {
     const [metodoSelecionado, setMetodoSelecionado] = useState<string>('');
     const [produto, setProduto] = useState<string>('');
     const [servico, setServico] = useState<Servico[]>([]);
+    const [servicoId, setServicoId] = useState<string>('');
     const [mSelecionado, setMSelecionado] = useState<string>('');
     const [mostrarCampos, setMostrarCampos] = useState<boolean>(false);
 
     const [clientes, setClientes] = useState<Cliente[]>([]);
+    
 
     useEffect(() => {
         axios.get('http://localhost:5001/clientes/comprar')
@@ -78,7 +84,6 @@ export default function Compra() {
                 if (cliente) {
                     setId(cliente.id);
                     setNome(cliente.nome);
-                    setCpf(cliente.cpf.valor);
                     setMostrarCampos(true);
                 }
             } catch (error) {
@@ -122,8 +127,9 @@ export default function Compra() {
     }
     
     const handleComprarServico = () => {
-        if (metodoSelecionado === '3' && id) {
-            axios.get(`http://localhost:5001/cliente/id/${id}/servico`)
+        if (metodoSelecionado === '3' && id && servicoId) {
+            const data = { servicoId }; // Se você já tem o servicoId disponível
+            axios.post(`http://localhost:5001/cliente/id/${id}/servico`, data)
                 .then(response => {
                     console.log(response.data);
                     alert('Serviço comprado!');
@@ -132,9 +138,9 @@ export default function Compra() {
                     console.error('Erro ao comprar serviço pelo ID:', error);
                 });
         } else {
-            console.warn('Por favor, selecione o método de busca por ID e forneça o ID do cliente para comprar o serviço.');
+            console.warn('Por favor, selecione o método de busca por ID e forneça o ID do cliente e o ID do serviço para comprar o serviço.');
         }
-    };    
+    };     
 
     const handleComprarProduto = () => {
         if (metodoSelecionado === '3' && id) {
@@ -154,6 +160,8 @@ export default function Compra() {
     useEffect(() => {
         const tabs = document.querySelectorAll('.tabs');
         M.Tabs.init(tabs);
+        const elems = document.querySelectorAll('select');
+        M.FormSelect.init(elems);
     }, []);
 
     let estiloBotao = `btn waves-effect waves-light`;
@@ -168,6 +176,7 @@ export default function Compra() {
                             <input id="id" type="text" className="validate" value={id} onChange={(e) => setId(e.target.value)} />
                             <label htmlFor="id">ID</label>
                         </div>
+                        {renderInputs()}
                         <div className="input-field col s12">
                             <button className="btn waves-effect waves-light" onClick={handleBuscarClick}>
                                 Buscar
@@ -181,7 +190,7 @@ export default function Compra() {
                                         <div className="row">
                                             <label htmlFor="compra">Escolha o que foi consumido</label>
                                             <div className="input-field col s12">
-                                                <select id="compra" className="browser-default" onChange={handleSelectionChange}>
+                                                <select style={selectStyle} id="compra" className="browser-default" onChange={handleSelectionChange}>
                                                     <option value="">Escolha o que foi consumido</option>
                                                     <option value="Produto">Produto</option>
                                                     <option value="Servico">Serviço</option>

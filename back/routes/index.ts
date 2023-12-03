@@ -24,7 +24,7 @@ router.post('/cpf', async (req: Request, res: Response) => {
 });
 
 // Cadastrar cliente
-router.post('/cliente', async (req: Request, res: Response) => {
+router.post('/cadastroCliente', async (req: Request, res: Response) => {
   const { nome, nomeSocial, genero, cpfValor, empresaId } = req.body;
   const cliente = await prisma.cliente.create({
     data: {
