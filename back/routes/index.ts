@@ -14,46 +14,55 @@ router.use(express.json());
 
 // Cadastrar cliente
 router.post('/cadastroCli', async (req: Request, res: Response) => {
-  const { nome, nomeSocial, genero, cpfValor, telefone, rgValor } = req.body;
+  const { nome, nomeSocial, genero, cpfValor, telefoneNumero, rgValor } = req.body;
   try {
+    // Encontre o CPF, RG e Telefone existentes
+    const cpfExistente = await prisma.CPF.findUnique({ where: { valor: cpfValor } });
+    const rgExistente = await prisma.RG.findUnique({ where: { valor: rgValor } });
+    const telefoneExistente = await prisma.Telefone.findUnique({ where: { numero: telefoneNumero } });
+    console.log(cpfExistente)
+    console.log(rgExistente)
+    console.log(telefoneExistente)
+    // Verifique se o CPF, RG e Telefone existem
+    if (!cpfExistente || !rgExistente || !telefoneExistente) {
+      return res.status(404).json({ error: 'CPF, RG ou Telefone não encontrados.' });
+    }
+
+    // Crie um novo cliente e conecte o CPF, RG e Telefone existentes
     const novoCliente = await prisma.Cliente.create({
       data: {
         nome: nome,
         nomeSocial: nomeSocial,
         genero: genero,
-        telefone: {
-          create: {
-            ddd: telefone.ddd,
-            numero: telefone.numero
+        cpf: {
+          connect: {
+            valor: cpfValor,
           }
         },
         rgs: {
-          create: {
+          connect: {
             valor: rgValor,
-            dataEmissao: new Date()
           }
         },
-        cpf: {
-          create: {
-            valor: cpfValor,
-            dataEmissao: new Date()
+        telefone: {
+          connect: {
+            id: telefoneExistente.id,
           }
         },
         empresaId: 1
       },
       include: {
-        telefone: true,
-        rgs: true,
         cpf: true,
+        rgs: true,
+        telefone: true,
       },
     });
     console.log(novoCliente)
-    res.json(novoCliente);
+    return res.json(novoCliente);
   } catch (error) {
     res.status(500).json(error);
   }
 });
-
 
 router.post('/telefones', async (req: Request, res: Response) => {
   const { ddd, numero } = req.body;

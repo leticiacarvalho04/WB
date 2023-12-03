@@ -36,19 +36,32 @@ export default function FormularioCadastroCliente() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     try {
+      // Crie o CPF
+      const cpfResponse = await axios.post('http://localhost:5001/cpfs', {
+        valor: cpfValor,
+      });
+  
+      // Crie o RG
+      const rgResponse = await axios.post('http://localhost:5001/rgs', {
+        valor: rgValor,
+      });
+  
+      // Crie o Telefone
+      const telefoneResponse = await axios.post('http://localhost:5001/telefones', {
+        ddd: ddd,
+        numero: numeroTelefone,
+      });
+  
       // Enviar o cliente com todas as informações relacionadas
       const clienteResponse = await axios.post('http://localhost:5001/cadastroCli', {
         nome,
         nomeSocial,
         genero,
-        cpfValor,
-        telefone: {
-          ddd,
-          numero: numeroTelefone,
-        },
-        rgValor
+        cpfValor: cpfResponse.data.valor,
+        telefoneNumero: telefoneResponse.data.numero,
+        rgValor: rgResponse.data.valor,
       });
       console.log(clienteResponse)
       alert('Cliente cadastrado!')
@@ -56,7 +69,8 @@ export default function FormularioCadastroCliente() {
     } catch (error) {
       console.error('Erro ao cadastrar o cliente:', error);
     }
-  };  
+  };
+  
 
   let estiloBotao = `btn waves-effect waves-light`;
 
