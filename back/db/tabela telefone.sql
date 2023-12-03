@@ -1,39 +1,32 @@
-/*
--- Query: SELECT CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');') 
-FROM telefone
-LIMIT 0, 1000
-
--- Date: 2023-11-21 09:36
-*/
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'1\', \'12\', \'132983202\', 1);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'2\', \'34\', \'987654321\', 2);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'3\', \'82\', \'010294052\', 2);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'4\', \'11\', \'999888777\', 3);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'5\', \'21\', \'123456789\', 4);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'6\', \'21\', \'987654321\', 4);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'7\', \'31\', \'777888999\', 5);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'8\', \'81\', \'987654320\', 6);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'9\', \'41\', \'413576879\', 7);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'10\', \'51\', \'241352465\', 8);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'11\', \'13\', \'049213314\', 9);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'12\', \'71\', \'820231843\', 10);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'13\', \'61\', \'132465768\', 11);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'14\', \'32\', \'314658869\', 12);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'15\', \'48\', \'351105693\', 13);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'16\', \'58\', \'967452315\', 14);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'17\', \'68\', \'481246430\', 15);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'18\', \'78\', \'381310324\', 16);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'19\', \'88\', \'317328743\', 17);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'20\', \'98\', \'941473567\', 18);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'21\', \'28\', \'827423610\', 19);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'22\', \'38\', \'397131623\', 20);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'23\', \'11\', \'127236128\', 21);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'24\', \'21\', \'732316397\', 22);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'25\', \'31\', \'232613594\', 23);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'26\', \'41\', \'923531526\', 24);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'27\', \'51\', \'246231739\', 25);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'28\', \'61\', \'249742635\', 26);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'29\', \'71\', \'394723135\', 27);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'30\', \'81\', \'236731329\', 28);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'31\', \'91\', \'302831261\', 29);');
-INSERT INTO `` (`CONCAT('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(''', id, ''', ''', ddd, ''', ''', numero, ''', ', clienteId, ');')`) VALUES ('INSERT INTO telefone(id, ddd, numero, clienteId) VALUES(\'32\', \'98\', \'453423138\', 30);');
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('1', '12', '132983202', 1);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('2', '34', '987654321', 2);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('3', '82', '010294052', 2);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('4', '11', '999888777', 3);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('5', '21', '123456789', 4);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('6', '21', '987654321', 4);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('7', '31', '777888999', 5);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('8', '81', '987654320', 6);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('9', '41', '413576879', 7);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('10', '51', '241352465', 8);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('11', '13', '049213314', 9);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('12', '71', '820231843', 10);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('13', '61', '132465768', 11);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('14', '32', '314658869', 12);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('15', '48', '351105693', 13);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('16', '58', '967452315', 14);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('17', '68', '481246430', 15);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('18', '78', '381310324', 16);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('19', '88', '317328743', 17);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('20', '98', '941473567', 18);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('21', '28', '827423610', 19);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('22', '38', '397131623', 20);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('23', '11', '127236128', 21);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('24', '21', '732316397', 22);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('25', '31', '232613594', 23);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('26', '41', '923531526', 24);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('27', '51', '246231739', 25);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('28', '61', '249742635', 26);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('29', '71', '394723135', 27);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('30', '81', '236731329', 28);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('31', '91', '302831261', 29);
+INSERT INTO telefone(id, ddd, numero, clienteId) VALUES('32', '98', '453423138', 30);

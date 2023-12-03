@@ -25,7 +25,6 @@ export default function FormularioCadastroCliente() {
       const cpfResponse = await axios.post('http://localhost:5001/cpfs', {
         valor: cpfValor,
       });
-      const cpfId = cpfResponse.data.id;
   
       // Enviar os RGs
       const rgIds = [];
@@ -49,8 +48,8 @@ export default function FormularioCadastroCliente() {
         nome,
         nomeSocial,
         genero,
-        numeroTelefone: telefoneId,
-        cpfValor: cpfId,
+        numeroTelefone: telefoneId, // Altere para o ID do telefone
+        cpfValor: cpfResponse,
         rgValor: rgIds,
       });
   

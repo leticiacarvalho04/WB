@@ -61,30 +61,20 @@ export default function Compra() {
         setMetodoSelecionado(event.target.value);
     };
 
-    const buscarCliente = async (query: string): Promise<Cliente | null> => {
+    const buscarClientePorId = async (id: string): Promise<Cliente | null> => {
         try {
-            if (metodoSelecionado === '1') {
-                const response = await axios.get(`http://localhost:5001/cliente/cpf/${query}`);
-                return response.data;
-            } else if (metodoSelecionado === '2') {
-                const response = await axios.get(`http://localhost:5001/cliente/nome/${query}`);
-                return response.data;
-            } else if (metodoSelecionado === '3') {
-                const response = await axios.get(`http://localhost:5001/cliente/id/${query}`);
-                return response.data;
-            }
+            const response = await axios.get(`http://localhost:5001/cliente/id/${id}`);
+            return response.data;
         } catch (error) {
             console.error('Erro ao buscar cliente:', error);
             return null;
         }
-        return null;
-    };    
+    }; 
 
     const handleBuscarClick = async () => {
-        const query = metodoSelecionado === '1' ? cpf : metodoSelecionado === '2' ? nome : id;
-        if (query) {
+        if (id) {
             try {
-                const cliente = await buscarCliente(query);
+                const cliente = await buscarClientePorId(id);
                 if (cliente) {
                     setId(cliente.id);
                     setNome(cliente.nome);
@@ -95,9 +85,9 @@ export default function Compra() {
                 console.error('Erro ao buscar cliente:', error);
             }
         } else {
-            console.error('Query is undefined');
+            console.error('ID não fornecido');
         }
-    };    
+    };
 
     const renderInputs = () => {
         return (
@@ -132,58 +122,22 @@ export default function Compra() {
     }
     
     const handleComprarServico = () => {
-        if (metodoSelecionado === '1' && cpf) {
-            axios.get(`http://localhost:5001/cliente/cpf/${cpf}/servico`)
-                .then(response => {
-                    console.log(response.data);
-                    alert('Serviço comprado!');
-                })
-                .catch(error => {
-                    console.error('Erro ao comprar servico pelo CPF:', error);
-                });
-        } else if (metodoSelecionado === '2' && nome) {
-            axios.get(`http://localhost:5001/cliente/nome/${nome}/servico`)
-                .then(response => {
-                    console.log(response.data);
-                    alert('Serviço comprado!');
-                })
-                .catch(error => {
-                    console.error('Erro ao comprar servico pelo nome:', error);
-                });
-        } else if (metodoSelecionado === '3' && id) {
+        if (metodoSelecionado === '3' && id) {
             axios.get(`http://localhost:5001/cliente/id/${id}/servico`)
                 .then(response => {
                     console.log(response.data);
                     alert('Serviço comprado!');
                 })
                 .catch(error => {
-                    console.error('Erro ao comprar servico pelo ID:', error);
+                    console.error('Erro ao comprar serviço pelo ID:', error);
                 });
         } else {
-            console.warn('Por favor, selecione um método válido e forneça os detalhes necessários (ID, CPF ou Nome).');
+            console.warn('Por favor, selecione o método de busca por ID e forneça o ID do cliente para comprar o serviço.');
         }
-    };
+    };    
 
     const handleComprarProduto = () => {
-        if (metodoSelecionado === '1' && cpf) {
-            axios.get(`http://localhost:5001/cliente/cpf/${cpf}/produto`)
-                .then(response => {
-                    console.log(response.data);
-                    alert('Produto comprado!');
-                })
-                .catch(error => {
-                    console.error('Erro ao comprar produto pelo CPF:', error);
-                });
-        } else if (metodoSelecionado === '2' && nome) {
-            axios.get(`http://localhost:5001/cliente/nome/${nome}/produto`)
-                .then(response => {
-                    console.log(response.data);
-                    alert('Produto comprado!');
-                })
-                .catch(error => {
-                    console.error('Erro ao comprar produto pelo nome:', error);
-                });
-        } else if (metodoSelecionado === '3' && id) {
+        if (metodoSelecionado === '3' && id) {
             axios.get(`http://localhost:5001/cliente/id/${id}/produto`)
                 .then(response => {
                     console.log(response.data);
@@ -193,7 +147,7 @@ export default function Compra() {
                     console.error('Erro ao comprar produto pelo ID:', error);
                 });
         } else {
-            console.warn('Por favor, selecione um método válido e forneça os detalhes necessários (ID, CPF ou Nome).');
+            console.warn('Por favor, selecione o método de busca por ID e forneça o ID do cliente para comprar o produto.');
         }
     };    
 
@@ -211,21 +165,9 @@ export default function Compra() {
                     <div className="card-content">
                         <span className="card-title">Comprar Produto ou Serviço</span>
                         <div className="input-field col s12">
-                            <option value="" disabled></option>
-                            <select
-                                id="metodo"
-                                className="browser-default"
-                                onChange={handleMetodoChange}
-                                value={metodoSelecionado}
-                            >
-                                <option value=''></option>
-                                <option value="1">Procurar por CPF</option>
-                                <option value="2">Procurar por Nome</option>
-                                <option value="3">Procurar por ID</option>
-                            </select>
-                            <label>Método de Busca</label>
+                            <input id="id" type="text" className="validate" value={id} onChange={(e) => setId(e.target.value)} />
+                            <label htmlFor="id">ID</label>
                         </div>
-                        {renderInputs()}
                         <div className="input-field col s12">
                             <button className="btn waves-effect waves-light" onClick={handleBuscarClick}>
                                 Buscar

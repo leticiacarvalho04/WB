@@ -34,7 +34,7 @@ router.post('/cadastroCli', async (req: Request, res: Response) => {
         genero: genero,
         telefone:{
           connect:{
-            id: telefone.id
+            id: telefone.id,
           }
         },
         cpf: {
@@ -43,17 +43,15 @@ router.post('/cadastroCli', async (req: Request, res: Response) => {
           }
         },
         rgs: {
-          connect: {
-            valor: rgValor,
-          }
-        },
+          connect: rgValor.map((valor: string) => ({ valor })) // Conecte todos os RGs
+        },        
         empresa: {
           connect: {
             id: 1
           }
         }
       },
-    });
+    });    
     console.log(novoCliente);
     res.json(novoCliente);
   } catch (error) {
@@ -95,7 +93,7 @@ router.post('/rgs', async (req: Request, res: Response) => {
 router.post('/cpfs', async (req: Request, res: Response) => {
   const { valor } = req.body;
   try {
-    const novoCPF = await prisma.cPF.create({
+    const novoCPF = await prisma.CPF.create({
       data: {
         valor: valor,
         dataEmissao: new Date(),
