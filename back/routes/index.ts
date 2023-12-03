@@ -12,101 +12,54 @@ router.use(express.json());
 
                                               // CADASTROS //
 
+router.post('/cpf', async (req: Request, res: Response) => {
+  const { valor, dataEmissao } = req.body;
+  const cpf = await prisma.CPF.create({
+    data: {
+      valor: valor,
+      dataEmissao: new Date(dataEmissao),
+    },
+  });
+  res.json(cpf);
+});
+
 // Cadastrar cliente
-router.post('/cadastroCli', async (req: Request, res: Response) => {
-  const { nome, nomeSocial, genero, cpfValor, telefoneNumero, rgValor } = req.body;
-  try {
-    // Encontre o CPF, RG e Telefone existentes
-    const cpfExistente = await prisma.CPF.findUnique({ where: { valor: cpfValor } });
-    const rgExistente = await prisma.RG.findUnique({ where: { valor: rgValor } });
-    const telefoneExistente = await prisma.Telefone.findUnique({ where: { numero: telefoneNumero } });
-    console.log(cpfExistente)
-    console.log(rgExistente)
-    console.log(telefoneExistente)
-    // Verifique se o CPF, RG e Telefone existem
-    if (!cpfExistente || !rgExistente || !telefoneExistente) {
-      return res.status(404).json({ error: 'CPF, RG ou Telefone não encontrados.' });
-    }
-
-    // Crie um novo cliente e conecte o CPF, RG e Telefone existentes
-    const novoCliente = await prisma.Cliente.create({
-      data: {
-        nome: nome,
-        nomeSocial: nomeSocial,
-        genero: genero,
-        cpf: {
-          connect: {
-            valor: cpfValor,
-          }
-        },
-        rgs: {
-          connect: {
-            valor: rgValor,
-          }
-        },
-        telefone: {
-          connect: {
-            id: telefoneExistente.id,
-          }
-        },
-        empresaId: 1
-      },
-      include: {
-        cpf: true,
-        rgs: true,
-        telefone: true,
-      },
-    });
-    console.log(novoCliente)
-    return res.json(novoCliente);
-  } catch (error) {
-    res.status(500).json(error);
-  }
+router.post('/cliente', async (req: Request, res: Response) => {
+  const { nome, nomeSocial, genero, cpfValor, empresaId } = req.body;
+  const cliente = await prisma.cliente.create({
+    data: {
+      nome,
+      nomeSocial,
+      genero,
+      cpfValor,
+      empresaId,
+    },
+  });
+  res.json(cliente);
 });
 
-router.post('/telefones', async (req: Request, res: Response) => {
-  const { ddd, numero } = req.body;
-  try {
-    const novoTelefone = await prisma.telefone.create({
-      data: {
-        ddd: ddd,
-        numero: numero
-      },
-    });
-    res.json(novoTelefone);
-  } catch (error) {
-    res.status(500).json(error);
-  }
+router.post('/rg', async (req: Request, res: Response) => {
+  const { valor, dataEmissao, clienteId } = req.body;
+  const rg = await prisma.RG.create({
+    data: {
+      valor,
+      dataEmissao: new Date(dataEmissao),
+      clienteId,
+    },
+  });
+  res.json(rg);
 });
 
-router.post('/rgs', async (req: Request, res: Response) => {
-  const { valor } = req.body;
-  try {
-    const novoRG = await prisma.rG.create({
-      data: {
-        valor: valor,
-        dataEmissao: new Date(),
-      },
-    });
-    res.json(novoRG);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
-
-router.post('/cpfs', async (req: Request, res: Response) => {
-  const { valor } = req.body;
-  try {
-    const novoCPF = await prisma.CPF.create({
-      data: {
-        valor: valor,
-        dataEmissao: new Date(),
-      },
-    });
-    res.json(novoCPF);
-  } catch (error) {
-    res.status(500).json(error);
-  }
+router.post('/telefone', async (req:Request, res:Response) => {
+  const { ddd, numero, clienteId } = req.body;
+  const telefone = await prisma.telefone.create({
+    data: {
+      ddd,
+      numero,
+      clienteId,
+    },
+  });
+  res.json(telefone);
 });
 
 router.post('/cadastroPro',async(req:Request,res:Response)=>{

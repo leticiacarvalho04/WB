@@ -12,7 +12,8 @@ export default function FormularioCadastroCliente() {
   const [quantidadeRg, setQuantidadeRg] = useState(0);
 
   const handleGeneroChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGenero(event.target.value);
+    const generoSelecionado = event.target.value === "1" ? "Masculino" : "Feminino";
+    setGenero(generoSelecionado);
   };  
 
   // Manipuladores de eventos
@@ -39,39 +40,42 @@ export default function FormularioCadastroCliente() {
   
     try {
       // Crie o CPF
-      const cpfResponse = await axios.post('http://localhost:5001/cpfs', {
+      const cpfResponse = await axios.post('http://localhost:5001/cpf', {
         valor: cpfValor,
+        dataEmissao: new Date(),
       });
   
-      // Crie o RG
-      const rgResponse = await axios.post('http://localhost:5001/rgs', {
-        valor: rgValor,
-      });
-  
-      // Crie o Telefone
-      const telefoneResponse = await axios.post('http://localhost:5001/telefones', {
-        ddd: ddd,
-        numero: numeroTelefone,
-      });
-  
-      // Enviar o cliente com todas as informações relacionadas
-      const clienteResponse = await axios.post('http://localhost:5001/cadastroCli', {
+      // Crie o Cliente
+      const clienteResponse = await axios.post('http://localhost:5001/cliente', {
         nome,
         nomeSocial,
         genero,
         cpfValor: cpfResponse.data.valor,
-        telefoneNumero: telefoneResponse.data.numero,
-        rgValor: rgResponse.data.valor,
+        empresaId: 1
       });
-      console.log(clienteResponse)
-      alert('Cliente cadastrado!')
-      console.log('Cliente cadastrado:', clienteResponse.data);
+  
+      // Crie o RG
+      for (let i = 0; i < quantidadeRg; i++) {
+        await axios.post('http://localhost:5001/rg', {
+          valor: rgValor[i],
+          dataEmissao: new Date(),
+          clienteId: clienteResponse.data.id,
+        });
+      }
+  
+      // Crie o Telefone
+      await axios.post('http://localhost:5001/telefone', {
+        ddd,
+        numero: numeroTelefone,
+        clienteId: clienteResponse.data.id,
+      });
+  
+      alert('Cliente cadastrado com sucesso!');
     } catch (error) {
       console.error('Erro ao cadastrar o cliente:', error);
     }
   };
   
-
   let estiloBotao = `btn waves-effect waves-light`;
 
     return (
