@@ -20,11 +20,16 @@ export default function FormularioAtualizacaoServicos() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { id, value } = e.target;
+  
+    // Convert price to a number
+    const newValue = id === 'price' ? parseFloat(value) : value;
+  
     setServico((prevServico) => ({
       ...prevServico,
-      [id]: value,
+      [id]: newValue,
     }));
   };
+  
 
   useEffect(() => {
     const carregarDetalhesServico = async () => {

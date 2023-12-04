@@ -7,6 +7,7 @@ export default function FormularioCadastroProduto(){
     nome: "",
     name: '',
     descricao: "",
+    descricaoP: "",
     price: 0,
     preco: 0,
     quantidadeEstoque: "",
@@ -25,11 +26,12 @@ export default function FormularioCadastroProduto(){
     try {
       const response = await axios.post("http://localhost:5001/cadastroPro", {
         nome: formData.nome,
-        descricao: formData.descricao,
+        descricao: formData.descricaoP,
         preco: Number(formData.preco), // Certifique-se de enviar como número
         quantidadeEstoque: parseInt(formData.quantidadeEstoque), // Certifique-se de enviar como número inteiro
         empresaId: formData.empresaId,
       });
+      alert('Produto cadastrado!')
   
       console.log(response.data);
     } catch (error) {
@@ -50,6 +52,7 @@ export default function FormularioCadastroProduto(){
       console.log(formData.descricao)
       console.log(formData.price)
       console.log(response.data);
+      alert('Serviço cadastrado!')
       // Faça algo com a resposta, se necessário
     } catch (error) {
       console.error("Erro ao cadastrar serviço:", error);

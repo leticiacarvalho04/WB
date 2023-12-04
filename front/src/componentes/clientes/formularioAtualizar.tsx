@@ -37,49 +37,9 @@ const FormularioAtualizacaoCliente: React.FC = () => {
       [id]: value,
     }));
   };
-  
 
-  const isCpfValid = (cpf: string): boolean => {
-    return cpf.length === 11;
-  };
-
-  const isPhoneNumberValid = (
-    phone: string,
-    ddd: string
-  ): boolean => {
-    const fullPhoneNumber = ddd + phone;
-    return fullPhoneNumber.length === 11;
-  };
-
-  const cleanRG = (rg: string): string => {
-    return rg.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
-  };
-
-  const isRgValid = (rg: string): boolean => {
-    const cleanedRG = cleanRG(rg);
-    return cleanedRG.length === 9;
-  };
 
   const handleAtualizarClick = async () => {
-    if (!isCpfValid(formData.cpfValor)) {
-      alert("CPF inválido!");
-      return;
-    }
-
-    if (
-      !isPhoneNumberValid(
-        formData.telefones[0].numeroTelefone,
-        formData.telefones[0].ddd
-      )
-    ) {
-      alert("Telefone inválido!");
-      return;
-    }
-
-    if (!isRgValid(formData.rgValor)) {
-      alert("RG inválido!");
-      return;
-    }
 
     try {
       await axios.put(`http://localhost:5001/clientes/cpf/${cpf}`, formData);
@@ -132,7 +92,6 @@ const FormularioAtualizacaoCliente: React.FC = () => {
             </option>
             <option value="feminino">Feminino</option>
             <option value="masculino">Masculino</option>
-            <option value="outro">Outro</option>
           </select>
         </div>
         <div className="input-field col s12">
