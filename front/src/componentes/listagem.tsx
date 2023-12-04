@@ -16,7 +16,7 @@ interface Produto {
     quantidadeEstoque: number;
 }
 
-interface QntProduto{
+interface QntProduto {
     id: number;
     produtoNome: string;
     count: number;
@@ -27,7 +27,7 @@ interface Servico {
     price: number;
 }
 
-interface QntServico{
+interface QntServico {
     nomeServico: string;
     count: number;
 }
@@ -65,7 +65,7 @@ export default function Listagem() {
             });
     };
 
-    
+
 
     const clientesMenosConsumidores = () => {
         axios.get('http://localhost:5001/clientes/menosConsumidores')
@@ -80,6 +80,7 @@ export default function Listagem() {
     const fetchProdutos = () => {
         axios.get('http://localhost:5001/produto')
             .then((response) => {
+                console.log(response.data); // Log the data to check it
                 setProdutos(response.data);
             })
             .catch((err) => console.log(err));
@@ -91,7 +92,7 @@ export default function Listagem() {
                 console.log('Dados de serviços:', response.data);
                 setServicos(response.data);
             })
-            .catch((err) => console.log(err))
+            .catch((err) => console.log(err));
     };
 
     const produtosGeneroFemininoRequest = () => {
@@ -127,7 +128,7 @@ export default function Listagem() {
             .then((response) => {
                 console.log('Dados de serviços por gênero feminino:', response.data); // Adição para verificar os dados recebidos
                 const servicosConsumidos: QntServico[] = response.data.map((item: any) => ({
-                    servicoNome: item.servicoNome,
+                    nomeServico: item.nomeServico,
                     count: item.count
                 }));
                 setServicosGeneroFeminino(servicosConsumidos);
@@ -142,7 +143,7 @@ export default function Listagem() {
             .then((response) => {
                 console.log('Dados de serviços por gênero masculino:', response.data); // Adição para verificar os dados recebidos
                 const servicosConsumidos: QntServico[] = response.data.map((item: any) => ({
-                    servicoNome: item.servicoNome,
+                    nomeServico: item.nomeServico,
                     count: item.count
                 }));
                 setServicosGeneroMasculino(servicosConsumidos);
@@ -157,13 +158,13 @@ export default function Listagem() {
             <div className="col s12">
                 <ul className="tabs">
                     <li className="tab col s4">
-                    <a href="#produtoTab">Listagem Produto</a>
+                        <a href="#produtoTab">Listagem Produto</a>
                     </li>
                     <li className="tab col s4">
-                    <a href="#servicoTab">Listagem Serviço</a>
+                        <a href="#servicoTab">Listagem Serviço</a>
                     </li>
                     <li className="tab col s4">
-                    <a href="#clienteTab">Listagens Relacionadas aos Clientes</a>
+                        <a href="#clienteTab">Listagens Relacionadas aos Clientes</a>
                     </li>
                 </ul>
             </div>
@@ -172,37 +173,41 @@ export default function Listagem() {
                     <div className="card-content">
                         <span className="card-title">Listar Produto</span>
                         <div>
-                        {produtos.map((produto, index) => (
-                            <div key={index}>
-                                <p>{produto.id} - {produto.nome} - Preço: {produto.preco} - Estoque: {produto.quantidadeEstoque}</p>
-                                <br />
-                            </div>
-                        ))}
+                            {produtos.map((produto, index) => {
+                                console.log(`Mapeando produto ${index}`);
+                                return (
+                                    <div key={index}>
+                                        <p>{produto.nome} - Preço: {produto.preco} - Quantidade: {produto.quantidadeEstoque}</p>
+                                        <br />
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
                 <div className="card">
                     <div className="card-content">
-                    <span className="card-title">Produtos mais consumidos por gênero</span>
-                    <div>
-                        <br />
-                        <p><strong>Gênero Feminino</strong></p>
-                        {produtosGeneroFeminino.map((produto, index) => (
-                            <div key={index}>
-                                <p>{index + 1} - {produto.produtoNome} - Quantidade: {produto.count}</p>
-                                <br />
-                            </div>
-                        ))}
-                    </div>
-                    <div>
-                        <br />
-                        <p><strong>Gênero Masculino</strong></p>
-                        {produtosGeneroMasculino.map((produto, index) => (
-                            <div key={index}>
-                                <p>{index + 1} - {produto.produtoNome} - Quantidade: {produto.count}</p>
-                                <br />
-                            </div>
-                        ))}
+                        <span className="card-title">Produtos mais consumidos por gênero</span>
+                        <div>
+                            <br />
+                            <p><strong>Gênero Feminino</strong></p>
+                            {produtosGeneroFeminino.map((produto, index) => (
+                                <div key={index}>
+                                    <p>{index + 1} - {produto.produtoNome} - Quantidade: {produto.count}</p>
+                                    <br />
+                                </div>
+                            ))}
+                        </div>
+                        <div>
+                            <br />
+                            <p><strong>Gênero Masculino</strong></p>
+                            {produtosGeneroMasculino.map((produto, index) => (
+                                <div key={index}>
+                                    <p>{index + 1} - {produto.produtoNome} - Quantidade: {produto.count}</p>
+                                    <br />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -211,13 +216,13 @@ export default function Listagem() {
                     <div className="card-content">
                         <span className="card-title">Listar serviços</span>
                         <div>
-                        {servicos && servicos.map((servico, index) => (
+                            {servicos && servicos.map((servico, index) => (
                                 <div key={index}>
                                     <p>{servico.name} - Preço: {servico.price}</p>
                                     <br />
                                 </div>
                             ))
-                        }
+                            }
                         </div>
                     </div>
                 </div>
@@ -226,23 +231,22 @@ export default function Listagem() {
                         <span className="card-title">Serviços mais consumidos por gênero</span>
                         <div>
                             <p><strong>Gênero Feminino</strong></p>
-                            {servicosGeneroFeminino && servicosGeneroFeminino.map((servico, index) => (
-                                    <div key={index}>
-                                        <p>{index + 1} - {servico.nomeServico}: {servico.count}</p>
-                                        <br />
-                                    </div>
-                                ))
-                            }
+                            {servicosGeneroFeminino.map((servico, index) => (
+                                <div key={index}>
+                                    <p>{index + 1} - {servico.nomeServico} - Quantidade: {servico.count}</p>
+                                    <br />
+                                </div>
+                            ))}
                         </div>
                         <div>
+                            <br />
                             <p><strong>Gênero Masculino</strong></p>
-                            {servicosGeneroMasculino && servicosGeneroMasculino.map((servico, index) => (
-                                    <div key={index}>
-                                        <p>{index + 1} - {servico.nomeServico}: {servico.count}</p>
-                                        <br />
-                                    </div>
-                                ))
-                            }
+                            {servicosGeneroMasculino.map((servico, index) => (
+                                <div key={index}>
+                                    <p>{index + 1} - {servico.nomeServico} - Quantidade: {servico.count}</p>
+                                    <br />
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -274,6 +278,5 @@ export default function Listagem() {
                 </div>
             </div>
         </div>
-    </div>
     );
 }
